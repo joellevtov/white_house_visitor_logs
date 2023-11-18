@@ -1,0 +1,55 @@
+---
+title: "R Notebook"
+authors: Taylor, Menna, Shaun, Joel
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+```
+
+
+```{r}
+## set working directory
+## setwd("~/Google Drive/My Drive/JOUR472/data_journalism_2023_fall/white_house_visitor_logs")
+
+wh_visitor_data <- read_csv("data/combined.csv")
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(as_datetime(mdy_hm(APPT_MADE_DATE))) |>  ## when I run this, R works but tells me that "14 failed to parse." I cannot for the life of me figure out what it's unhappy about 
+  mutate(as_datetime(mdy_hm(TOA))) |> 
+  mutate(as_datetime(mdy_hm(TOD))) |>
+  mutate(as_datetime(mdy_hm(APPT_START_DATE))) |>
+  mutate(as_datetime(mdy_hm(APPT_END_DATE))) |>
+  mutate(as_datetime(mdy_hm(APPT_CANCEL_DATE))) |>
+  mutate(as_datetime(mdy_hm(LASTENTRYDATE))) |>
+  mutate(as_datetime(mdy(RELEASEDATE))) |> 
+## I'm sure there's a way to get it to not put it in a new column but I can't figure out how - I know mutate means it will convert into a new column but...it doesn't work without the "mutate." I dunno.
+  clean_names()
+
+```
+Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
+```{r}
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(as_datetime(mdy_hm(APPT_MADE_DATE))) |>  ## when I run this, R works but tells me that "14 failed to parse." I cannot for the life of me figure out what it's unhappy about 
+  mutate(as_datetime(mdy(TOA))) |> 
+  mutate(as_datetime(mdy(TOD))) |>
+  mutate(as_datetime(mdy(APPT_START_DATE))) |>
+  mutate(as_datetime(mdy(APPT_END_DATE))) |>
+  mutate(as_datetime(mdy(APPT_CANCEL_DATE))) |>
+  mutate(as_datetime(mdy(LASTENTRYDATE))) 
+
+# I'm running into an error here, I'm not quite sure how to fix it - it does not (like it did before) make new columns as I've asked it to, just this time without the time. According to the Lubridate cheatsheat, my code should work so I dunno (as usual). I tried telling it "as_date" but that threw the following error:
+# Error in mutate(wh_visitor_data, as_date(mdy_hm(APPT_MADE_DATE))) : 
+# Caused by error in `h()`:
+# ! error in evaluating the argument 'x' in selecting a method for function 'as_date': object 'APPT_MADE_DATE' not found
+# Whenever I've fixed the above problems, here's what I'd do next:
+
+wh_visitor_data
+  group_by(date_of_visit) |> 
+  summarize(count=n())
+  
+# once we've figured out the above headaches that should work fine.
+```
+
