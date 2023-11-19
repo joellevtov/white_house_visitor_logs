@@ -28,6 +28,14 @@ wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
   mutate(releasedate = mdy(releasedate)) 
   
 ```
+Let's take a quick look at the data now that we've changed these columns into dates.
+
+```{r}
+glimpse(wh_visitor_data)
+```
+
+There are a lot of columns here that might not be particularly interesting or useful. We should probably get rid of x28 and x29, caller room, appt cancel date, terminal suffix, and any others that aren't valuable. There are a lot of NAs in here where dates should go. Also, the dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
 ```{r}
 
