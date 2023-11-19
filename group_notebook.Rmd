@@ -17,7 +17,7 @@ library(lubridate)
 
 
 ```{r}
-
+###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
 wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
   mutate(toa = mdy_hm(toa)) |>
   mutate(tod = mdy_hm(tod)) |>
@@ -34,7 +34,13 @@ Let's take a quick look at the data now that we've changed these columns into da
 glimpse(wh_visitor_data)
 ```
 
-There are a lot of NAs in here where dates should go. Also, the dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+Immediate limitations: 
+1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us.
+2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 
+4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations.
+5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here.
+6.  I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
 
 ```{r}
 # We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
