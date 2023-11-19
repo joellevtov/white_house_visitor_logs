@@ -34,30 +34,38 @@ Let's take a quick look at the data now that we've changed these columns into da
 glimpse(wh_visitor_data)
 ```
 
-There are a lot of columns here that might not be particularly interesting or useful. We should probably get rid of x28 and x29, caller room, appt cancel date, terminal suffix, and any others that aren't valuable. There are a lot of NAs in here where dates should go. Also, the dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+There are a lot of NAs in here where dates should go. Also, the dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+
+```{r}
+# We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
+
+clean_wh_visitor_data <- wh_visitor_data |>
+  select(-poa, -access_type, -tod, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29)
+
+# Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
+```
 
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
+
 ```{r}
 
 ###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
 
-wh_visitor_data <- wh_visitor_data |> 
-  mutate(toa_date = ymd_hms(toa) |> date())
-
-wh_visitor_data |>
+clean_wh_visitor_data |> 
+  mutate(toa_date = ymd_hms(toa) |> date()) |>
   group_by(toa_date) |> 
   summarize(count=n()) |>
   arrange(desc(count))
   
 # note - since there are so many NA dates here, I think we should group by appt date.
 
-wh_visitor_data |>
+wh_visitors_by_date <- clean_wh_visitor_data |>
   group_by(appt_start_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
 ### just kidding, there are a ton of NA dates still. maybe appt end date?
-wh_visitor_data |>
+wh_visitors_by_end_date <- clean_wh_visitor_data |>
   group_by(appt_end_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
