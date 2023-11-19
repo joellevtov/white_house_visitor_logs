@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+---
+title: "R Notebook"
+authors: Taylor, Menna, Shaun, Joel
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+```
+
+
+```{r}
+
+wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
+  mutate(toa = mdy_hm(toa)) |>
+  mutate(tod = mdy_hm(tod)) |>
+  mutate(appt_made_date = mdy_hm(appt_made_date))  |>
+  mutate(appt_start_date = mdy(appt_start_date))  |>
+  mutate(appt_end_date = mdy_hm(appt_end_date))  |>
+  mutate(lastentrydate = mdy_hm(lastentrydate))  |>
+  mutate(releasedate = mdy(releasedate)) 
+  
+```
+Let's take a quick look at the data now that we've changed these columns into dates.
+
+```{r}
+glimpse(wh_visitor_data)
+```
+
+There are a lot of columns here that might not be particularly interesting or useful. We should probably get rid of x28 and x29, caller room, appt cancel date, terminal suffix, and any others that aren't valuable. There are a lot of NAs in here where dates should go. Also, the dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+
+Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
+```{r}
+
+###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
+
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(toa_date = ymd_hms(toa) |> date())
+
+wh_visitor_data |>
+  group_by(toa_date) |> 
+  summarize(count=n()) |>
+  arrange(desc(count))
+  
+# note - since there are so many NA dates here, I think we should group by appt date.
+
+wh_visitor_data |>
+  group_by(appt_start_date) |>
+  summarize(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+### just kidding, there are a ton of NA dates still. maybe appt end date?
+wh_visitor_data |>
+  group_by(appt_end_date) |>
+  summarize(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+### this seems better
+```
