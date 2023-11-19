@@ -33,6 +33,12 @@ Let's take a quick look at the data now that we've changed these columns into da
 ```{r}
 glimpse(wh_visitor_data)
 ```
+Here are our new questions we'd like to answer:
+What are the most popular times / dates / months for White House visitors and how do they correlate with important political events?
+Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating) 
+West Wing Tours are selective, how many are being taken?
+Who has sponsored the most White House visitors - e.g. who is getting the most visitors?
+What percent of visitors have just been labeled “office visitors”? If it’s a significant percentage, that would seem to defeat the point of releasing these logs. Not much better than the Trump administration.
 
 Immediate limitations: 
 1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us.
