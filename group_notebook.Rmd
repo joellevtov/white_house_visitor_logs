@@ -52,7 +52,7 @@ Immediate limitations:
 # We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
 
 clean_wh_visitor_data <- wh_visitor_data |>
-  select(-poa, -access_type, -tod, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
+  select(-poa, -access_type, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
 
 # Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
 ```
@@ -65,7 +65,9 @@ Let's see when the most popular day for visiting was. To do that, first we're go
 
 clean_wh_visitor_data <- clean_wh_visitor_data |>
   mutate(toa_date = ymd_hms(toa) |> date()) |>
-  mutate(toa_time = ymd_hms(toa) |> hms()) 
+  mutate(tod_date = ymd_hms(tod) |>date())
+  
+####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
 clean_wh_visitor_data |>
   group_by(toa_date) |> 
@@ -80,6 +82,7 @@ wh_visitors_by_date <- clean_wh_visitor_data |>
   arrange(desc(total_visits))
 
 ### just kidding, there are a ton of NA dates still. maybe appt end date?
+
 wh_visitors_by_end_date <- clean_wh_visitor_data |>
   group_by(appt_end_date) |>
   summarize(total_visits = n()) |>
