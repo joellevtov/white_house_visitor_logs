@@ -52,7 +52,7 @@ Immediate limitations:
 # We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
 
 clean_wh_visitor_data <- wh_visitor_data |>
-  select(-poa, -access_type, -tod, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29)
+  select(-poa, -access_type, -tod, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
 
 # Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
 ```
@@ -63,8 +63,11 @@ Let's see when the most popular day for visiting was. To do that, first we're go
 
 ###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
 
-clean_wh_visitor_data |> 
+clean_wh_visitor_data <- clean_wh_visitor_data |>
   mutate(toa_date = ymd_hms(toa) |> date()) |>
+  mutate(toa_time = ymd_hms(toa) |> hms()) 
+
+clean_wh_visitor_data |>
   group_by(toa_date) |> 
   summarize(count=n()) |>
   arrange(desc(count))
