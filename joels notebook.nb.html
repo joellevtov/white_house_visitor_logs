@@ -1754,35 +1754,58 @@ display: none;
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGphbml0b3IpXG5saWJyYXJ5KGx1YnJpZGF0ZSlcbmBgYCJ9 -->
-<pre class="r"><code>library(tidyverse)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGphbml0b3IpXG5saWJyYXJ5KGx1YnJpZGF0ZSlcbmBgYFxuYGBgIn0= -->
+<pre class="r"><code>```r
+library(tidyverse)
 library(janitor)
 library(lubridate)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgc2V0IHdvcmtpbmcgZGlyZWN0b3J5XG4jIyBzZXR3ZChcIn4vR29vZ2xlIERyaXZlL015IERyaXZlL0pPVVI0NzIvZGF0YV9qb3VybmFsaXNtXzIwMjNfZmFsbC93aGl0ZV9ob3VzZV92aXNpdG9yX2xvZ3NcIilcblxud2hfdmlzaXRvcl9kYXRhIDwtIHJlYWRfY3N2KFwiZGF0YS9jb21iaW5lZC5jc3ZcIilcbmBgYCJ9 -->
-<pre class="r"><code>## set working directory
-## setwd(&quot;~/Google Drive/My Drive/JOUR472/data_journalism_2023_fall/white_house_visitor_logs&quot;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
 
-wh_visitor_data &lt;- read_csv(&quot;data/combined.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTmV3IG5hbWVzOldhcm5pbmc6IE9uZSBvciBtb3JlIHBhcnNpbmcgaXNzdWVzLCBjYWxsIGBwcm9ibGVtcygpYCBvbiB5b3VyIGRhdGEgZnJhbWUgZm9yIGRldGFpbHMsIGUuZy46XG4gIGRhdCA8LSB2cm9vbSguLi4pXG4gIHByb2JsZW1zKGRhdClSb3dzOiA4NDczNzEgQ29sdW1uczogMjnilIDilIAgQ29sdW1uIHNwZWNpZmljYXRpb24g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG5EZWxpbWl0ZXI6IFwiLFwiXG5jaHIgKDIzKTogTkFNRUxBU1QsIE5BTUVGSVJTVCwgTkFNRU1JRCwgVUlOLCBBQ0NFU1NfVFlQRSwgVE9BLCBQT0EsIFRPRCwgUE9ELCBBUFBUX01BREVfREFURSwgLi4uXG5kYmwgICgyKTogQkRHTkJSLCBUT1RBTF9QRU9QTEVcbmxnbCAgKDQpOiBBUFBUX0NBTkNFTF9EQVRFLCBDQUxMRVJfUk9PTSwgLi4uMjgsIC4uLjI5XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>New names:Warning: One or more parsing issues, call `problems()` on your data frame for details, e.g.:
-  dat &lt;- vroom(...)
-  problems(dat)Rows: 847371 Columns: 29── Column specification ──────────────────────────────────────────────────────────────────────────
-Delimiter: &quot;,&quot;
-chr (23): NAMELAST, NAMEFIRST, NAMEMID, UIN, ACCESS_TYPE, TOA, POA, TOD, POD, APPT_MADE_DATE, ...
-dbl  (2): BDGNBR, TOTAL_PEOPLE
-lgl  (4): APPT_CANCEL_DATE, CALLER_ROOM, ...28, ...29
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2hfdmlzaXRvcl9kYXRhIDwtIHdoX3Zpc2l0b3JfZGF0YSB8PiBcbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX01BREVfREFURSkpKSB8PiAgIyMgd2hlbiBJIHJ1biB0aGlzLCBSIHdvcmtzIGJ1dCB0ZWxscyBtZSB0aGF0IFwiMTQgZmFpbGVkIHRvIHBhcnNlLlwiIEkgY2Fubm90IGZvciB0aGUgbGlmZSBvZiBtZSBmaWd1cmUgb3V0IHdoYXQgaXQncyB1bmhhcHB5IGFib3V0IFxuICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5X2htKFRPQSkpKSB8PiBcbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShUT0QpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX1NUQVJUX0RBVEUpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX0VORF9EQVRFKSkpIHw+XG4gIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9DQU5DRUxfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5X2htKExBU1RFTlRSWURBVEUpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShSRUxFQVNFREFURSkpKSB8PiBcbiMjIEknbSBzdXJlIHRoZXJlJ3MgYSB3YXkgdG8gZ2V0IGl0IHRvIG5vdCBwdXQgaXQgaW4gYSBuZXcgY29sdW1uIGJ1dCBJIGNhbid0IGZpZ3VyZSBvdXQgaG93IC0gSSBrbm93IG11dGF0ZSBtZWFucyBpdCB3aWxsIGNvbnZlcnQgaW50byBhIG5ldyBjb2x1bW4gYnV0Li4uaXQgZG9lc24ndCB3b3JrIHdpdGhvdXQgdGhlIFwibXV0YXRlLlwiIEkgZHVubm8uXG4gIGNsZWFuX25hbWVzKClcbmBgYCJ9 -->
-<pre class="r"><code>wh_visitor_data &lt;- wh_visitor_data |&gt; 
-  mutate(as_datetime(mdy_hm(APPT_MADE_DATE))) |&gt;  ## when I run this, R works but tells me that &quot;14 failed to parse.&quot; I cannot for the life of me figure out what it&#39;s unhappy about 
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgc2V0IHdvcmtpbmcgZGlyZWN0b3J5XG4jIyBzZXR3ZChcXH4vR29vZ2xlIERyaXZlL015IERyaXZlL0pPVVI0NzIvZGF0YV9qb3VybmFsaXNtXzIwMjNfZmFsbC93aGl0ZV9ob3VzZV92aXNpdG9yX2xvZ3NcXClcblxud2hfdmlzaXRvcl9kYXRhIDwtIHJlYWRfY3N2KFxcZGF0YS9jb21iaW5lZC5jc3ZcXClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+## set working directory
+## setwd(\~/Google Drive/My Drive/JOUR472/data_journalism_2023_fall/white_house_visitor_logs\)
+
+wh_visitor_data &lt;- read_csv(\data/combined.csv\)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiTmV3IG5hbWVzOldhcm5pbmc6IE9uZSBvciBtb3JlIHBhcnNpbmcgaXNzdWVzLCBjYWxsIGBwcm9ibGVtcygpYCBvbiB5b3VyIGRhdGEgZnJhbWUgZm9yIGRldGFpbHMsIGUuZy46XG4gIGRhdCA8LSB2cm9vbSguLi4pXG4gIHByb2JsZW1zKGRhdClSb3dzOiA4NDczNzEgQ29sdW1uczogMjnilIDilIAgQ29sdW1uIHNwZWNpZmljYXRpb24g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG5EZWxpbWl0ZXI6IFxcXG4ifQ== --&gt;
+</code></pre>
+<p>New names:Warning: One or more parsing issues, call
+<code>problems()</code> on your data frame for details, e.g.: dat &lt;-
+vroom(…) problems(dat)Rows: 847371 Columns: 29── Column specification
+──────────────────────────────────────────────────────────────────────────
+Delimiter:<br />
+</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxud2hfdmlzaXRvcl9kYXRhIDwtIHdoX3Zpc2l0b3JfZGF0YSB8PiBcbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX01BREVfREFURSkpKSB8PiAgIyMgd2hlbiBJIHJ1biB0aGlzLCBSIHdvcmtzIGJ1dCB0ZWxscyBtZSB0aGF0IFxcMTQgZmFpbGVkIHRvIHBhcnNlLlxcIEkgY2Fubm90IGZvciB0aGUgbGlmZSBvZiBtZSBmaWd1cmUgb3V0IHdoYXQgaXQncyB1bmhhcHB5IGFib3V0IFxuICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5X2htKFRPQSkpKSB8PiBcbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShUT0QpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX1NUQVJUX0RBVEUpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX0VORF9EQVRFKSkpIHw+XG4gIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9DQU5DRUxfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5X2htKExBU1RFTlRSWURBVEUpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShSRUxFQVNFREFURSkpKSB8PiBcbiMjIEknbSBzdXJlIHRoZXJlJ3MgYSB3YXkgdG8gZ2V0IGl0IHRvIG5vdCBwdXQgaXQgaW4gYSBuZXcgY29sdW1uIGJ1dCBJIGNhbid0IGZpZ3VyZSBvdXQgaG93IC0gSSBrbm93IG11dGF0ZSBtZWFucyBpdCB3aWxsIGNvbnZlcnQgaW50byBhIG5ldyBjb2x1bW4gYnV0Li4uaXQgZG9lc24ndCB3b3JrIHdpdGhvdXQgdGhlIFxcbXV0YXRlLlxcIEkgZHVubm8uXG4gIGNsZWFuX25hbWVzKClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+wh_visitor_data &lt;- wh_visitor_data |&gt; 
+  mutate(as_datetime(mdy_hm(APPT_MADE_DATE))) |&gt;  ## when I run this, R works but tells me that \14 failed to parse.\ I cannot for the life of me figure out what it&#39;s unhappy about 
   mutate(as_datetime(mdy_hm(TOA))) |&gt; 
   mutate(as_datetime(mdy_hm(TOD))) |&gt;
   mutate(as_datetime(mdy_hm(APPT_START_DATE))) |&gt;
@@ -1790,42 +1813,56 @@ lgl  (4): APPT_CANCEL_DATE, CALLER_ROOM, ...28, ...29
   mutate(as_datetime(mdy_hm(APPT_CANCEL_DATE))) |&gt;
   mutate(as_datetime(mdy_hm(LASTENTRYDATE))) |&gt;
   mutate(as_datetime(mdy(RELEASEDATE))) |&gt; 
-## I&#39;m sure there&#39;s a way to get it to not put it in a new column but I can&#39;t figure out how - I know mutate means it will convert into a new column but...it doesn&#39;t work without the &quot;mutate.&quot; I dunno.
+## I&#39;m sure there&#39;s a way to get it to not put it in a new column but I can&#39;t figure out how - I know mutate means it will convert into a new column but...it doesn&#39;t work without the \mutate.\ I dunno.
   clean_names()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKEFQUFRfTUFERV9EQVRFKSlgLlxuQ2F1c2VkIGJ5IHdhcm5pbmc6XG4hICAxNCBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKFRPQSkpYC5cbkNhdXNlZCBieSB3YXJuaW5nOlxuISAgNDM3MiBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKFRPRCkpYC5cbkNhdXNlZCBieSB3YXJuaW5nOlxuISAgNDc0IGZhaWxlZCB0byBwYXJzZS5XYXJuaW5nOiBUaGVyZSB3YXMgMSB3YXJuaW5nIGluIGBtdXRhdGUoKWAuXG7ihLkgSW4gYXJndW1lbnQ6IGBhc19kYXRldGltZShtZHlfaG0oQVBQVF9TVEFSVF9EQVRFKSlgLlxuQ2F1c2VkIGJ5IHdhcm5pbmc6XG4hICA0MTMxMiBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKEFQUFRfRU5EX0RBVEUpKWAuXG5DYXVzZWQgYnkgd2FybmluZzpcbiEgIDE0IGZhaWxlZCB0byBwYXJzZS5XYXJuaW5nOiBUaGVyZSB3YXMgMSB3YXJuaW5nIGluIGBtdXRhdGUoKWAuXG7ihLkgSW4gYXJndW1lbnQ6IGBhc19kYXRldGltZShtZHlfaG0oTEFTVEVOVFJZREFURSkpYC5cbkNhdXNlZCBieSB3YXJuaW5nOlxuISAgNzI5NCBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5KFJFTEVBU0VEQVRFKSlgLlxuQ2F1c2VkIGJ5IHdhcm5pbmc6XG4hICAxNCBmYWlsZWQgdG8gcGFyc2UuXG4ifQ== -->
-<pre><code>Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy_hm(APPT_MADE_DATE))`.
-Caused by warning:
-!  14 failed to parse.Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy_hm(TOA))`.
-Caused by warning:
-!  4372 failed to parse.Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy_hm(TOD))`.
-Caused by warning:
-!  474 failed to parse.Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy_hm(APPT_START_DATE))`.
-Caused by warning:
-!  41312 failed to parse.Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy_hm(APPT_END_DATE))`.
-Caused by warning:
-!  14 failed to parse.Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy_hm(LASTENTRYDATE))`.
-Caused by warning:
-!  7294 failed to parse.Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `as_datetime(mdy(RELEASEDATE))`.
-Caused by warning:
-!  14 failed to parse.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Let’s see when the most popular day for visiting was. To do that,
-first we’re going to create new columns with only the dates.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2hfdmlzaXRvcl9kYXRhIDwtIHdoX3Zpc2l0b3JfZGF0YSB8PiBcbiAgbXV0YXRlKGFzX2RhdGUobWR5X2htKEFQUFRfTUFERV9EQVRFKSkpIHw+ICAjIyB3aGVuIEkgcnVuIHRoaXMsIFIgd29ya3MgYnV0IHRlbGxzIG1lIHRoYXQgXCIxNCBmYWlsZWQgdG8gcGFyc2UuXCIgSSBjYW5ub3QgZm9yIHRoZSBsaWZlIG9mIG1lIGZpZ3VyZSBvdXQgd2hhdCBpdCdzIHVuaGFwcHkgYWJvdXQgXG4gIG11dGF0ZShhc19kYXRlKG1keShUT0EpKSkgfD4gXG4gIG11dGF0ZShhc19kYXRlKG1keShUT0QpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGUobWR5KEFQUFRfU1RBUlRfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZShtZHkoQVBQVF9FTkRfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZShtZHkoQVBQVF9DQU5DRUxfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZShtZHkoTEFTVEVOVFJZREFURSkpKSBcblxuYGBgIn0= -->
-<pre class="r"><code>wh_visitor_data &lt;- wh_visitor_data |&gt; 
-  mutate(as_date(mdy_hm(APPT_MADE_DATE))) |&gt;  ## when I run this, R works but tells me that &quot;14 failed to parse.&quot; I cannot for the life of me figure out what it&#39;s unhappy about 
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKEFQUFRfTUFERV9EQVRFKSlgLlxuQ2F1c2VkIGJ5IHdhcm5pbmc6XG4hICAxNCBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKFRPQSkpYC5cbkNhdXNlZCBieSB3YXJuaW5nOlxuISAgNDM3MiBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKFRPRCkpYC5cbkNhdXNlZCBieSB3YXJuaW5nOlxuISAgNDc0IGZhaWxlZCB0byBwYXJzZS5XYXJuaW5nOiBUaGVyZSB3YXMgMSB3YXJuaW5nIGluIGBtdXRhdGUoKWAuXG7ihLkgSW4gYXJndW1lbnQ6IGBhc19kYXRldGltZShtZHlfaG0oQVBQVF9TVEFSVF9EQVRFKSlgLlxuQ2F1c2VkIGJ5IHdhcm5pbmc6XG4hICA0MTMxMiBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5X2htKEFQUFRfRU5EX0RBVEUpKWAuXG5DYXVzZWQgYnkgd2FybmluZzpcbiEgIDE0IGZhaWxlZCB0byBwYXJzZS5XYXJuaW5nOiBUaGVyZSB3YXMgMSB3YXJuaW5nIGluIGBtdXRhdGUoKWAuXG7ihLkgSW4gYXJndW1lbnQ6IGBhc19kYXRldGltZShtZHlfaG0oTEFTVEVOVFJZREFURSkpYC5cbkNhdXNlZCBieSB3YXJuaW5nOlxuISAgNzI5NCBmYWlsZWQgdG8gcGFyc2UuV2FybmluZzogVGhlcmUgd2FzIDEgd2FybmluZyBpbiBgbXV0YXRlKClgLlxu4oS5IEluIGFyZ3VtZW50OiBgYXNfZGF0ZXRpbWUobWR5KFJFTEVBU0VEQVRFKSlgLlxuQ2F1c2VkIGJ5IHdhcm5pbmc6XG4hICAxNCBmYWlsZWQgdG8gcGFyc2UuXG4ifQ== --&gt;
+</code></pre>
+<p>Warning: There was 1 warning in <code>mutate()</code>. ℹ In argument:
+<code>as_datetime(mdy_hm(APPT_MADE_DATE))</code>. Caused by warning: !
+14 failed to parse.Warning: There was 1 warning in
+<code>mutate()</code>. ℹ In argument:
+<code>as_datetime(mdy_hm(TOA))</code>. Caused by warning: ! 4372 failed
+to parse.Warning: There was 1 warning in <code>mutate()</code>. ℹ In
+argument: <code>as_datetime(mdy_hm(TOD))</code>. Caused by warning: !
+474 failed to parse.Warning: There was 1 warning in
+<code>mutate()</code>. ℹ In argument:
+<code>as_datetime(mdy_hm(APPT_START_DATE))</code>. Caused by warning: !
+41312 failed to parse.Warning: There was 1 warning in
+<code>mutate()</code>. ℹ In argument:
+<code>as_datetime(mdy_hm(APPT_END_DATE))</code>. Caused by warning: ! 14
+failed to parse.Warning: There was 1 warning in <code>mutate()</code>. ℹ
+In argument: <code>as_datetime(mdy_hm(LASTENTRYDATE))</code>. Caused by
+warning: ! 7294 failed to parse.Warning: There was 1 warning in
+<code>mutate()</code>. ℹ In argument:
+<code>as_datetime(mdy(RELEASEDATE))</code>. Caused by warning: ! 14
+failed to parse.</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+Let&#39;s see when the most popular day for visiting was. To do that, first we&#39;re going to create new columns with only the dates.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxud2hfdmlzaXRvcl9kYXRhIDwtIHdoX3Zpc2l0b3JfZGF0YSB8PiBcbiAgbXV0YXRlKGFzX2RhdGUobWR5X2htKEFQUFRfTUFERV9EQVRFKSkpIHw+ICAjIyB3aGVuIEkgcnVuIHRoaXMsIFIgd29ya3MgYnV0IHRlbGxzIG1lIHRoYXQgXFwxNCBmYWlsZWQgdG8gcGFyc2UuXFwgSSBjYW5ub3QgZm9yIHRoZSBsaWZlIG9mIG1lIGZpZ3VyZSBvdXQgd2hhdCBpdCdzIHVuaGFwcHkgYWJvdXQgXG4gIG11dGF0ZShhc19kYXRlKG1keShUT0EpKSkgfD4gXG4gIG11dGF0ZShhc19kYXRlKG1keShUT0QpKSkgfD5cbiAgbXV0YXRlKGFzX2RhdGUobWR5KEFQUFRfU1RBUlRfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZShtZHkoQVBQVF9FTkRfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZShtZHkoQVBQVF9DQU5DRUxfREFURSkpKSB8PlxuICBtdXRhdGUoYXNfZGF0ZShtZHkoTEFTVEVOVFJZREFURSkpKSBcblxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+wh_visitor_data &lt;- wh_visitor_data |&gt; 
+  mutate(as_date(mdy_hm(APPT_MADE_DATE))) |&gt;  ## when I run this, R works but tells me that \14 failed to parse.\ I cannot for the life of me figure out what it&#39;s unhappy about 
   mutate(as_date(mdy(TOA))) |&gt; 
   mutate(as_date(mdy(TOD))) |&gt;
   mutate(as_date(mdy(APPT_START_DATE))) |&gt;
@@ -1833,22 +1870,65 @@ first we’re going to create new columns with only the dates.</p>
   mutate(as_date(mdy(APPT_CANCEL_DATE))) |&gt;
   mutate(as_date(mdy(LASTENTRYDATE))) 
 </code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gYG11dGF0ZSgpYDpcbuKEuSBJbiBhcmd1bWVudDogYGFzX2RhdGUobWR5X2htKEFQUFRfTUFERV9EQVRFKSlgLlxuQ2F1c2VkIGJ5IGVycm9yIGluIGBoKClgOlxuISBlcnJvciBpbiBldmFsdWF0aW5nIHRoZSBhcmd1bWVudCAneCcgaW4gc2VsZWN0aW5nIGEgbWV0aG9kIGZvciBmdW5jdGlvbiAnYXNfZGF0ZSc6IG9iamVjdCAnQVBQVF9NQURFX0RBVEUnIG5vdCBmb3VuZFxuQmFja3RyYWNlOlxuICAxLiBkcGx5cjo6bXV0YXRlKC4uLilcbiAxOS4gYmFzZTo6LmhhbmRsZVNpbXBsZUVycm9yKC4uLilcbiAyMC4gYmFzZSAobG9jYWwpIGgoc2ltcGxlRXJyb3IobXNnLCBjYWxsKSlcbiJ9 --&gt;
+</code></pre>
+<p>Error in <code>mutate()</code>: ℹ In argument:
+<code>as_date(mdy_hm(APPT_MADE_DATE))</code>. Caused by error in
+<code>h()</code>: ! error in evaluating the argument ‘x’ in selecting a
+method for function ‘as_date’: object ‘APPT_MADE_DATE’ not found
+Backtrace: 1. dplyr::mutate(…) 19. base::.handleSimpleError(…) 20. base
+(local) h(simpleError(msg, call))</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+Let&#39;s see if we can find whether OpenAI lobbyists visited the president.
+According to Politico, here are the handful of lobbyists the company has:
+-   Tony Samp
+-   Chan Park
+The Politico story says that those two only started as OpenAI lobbyists in October so that doesn&#39;t help us.
+Let&#39;s try looking for the CEO, Samuel H Altman.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xlYW5fd2hfdmlzaXRvcl9kYXRhIHw+IFxuICBmaWx0ZXIoXG4gICAgc3RyX2RldGVjdChuYW1lbGFzdCwgcmVnZXgoXCJhbHRtYW5cIiwgaWdub3JlX2Nhc2UgPSBUUlVFKSlcbiAgICAmXG4gICAgc3RyX2RldGVjdChuYW1lZmlyc3QsIHJlZ2V4KFwiXnNhbVwiLCBpZ25vcmVfY2FzZT1UUlVFKSlcbiAgICAgICAgIClcbmBgYCJ9 --&gt;
+
+```r
+clean_wh_visitor_data |&gt; 
+  filter(
+    str_detect(namelast, regex(&quot;altman&quot;, ignore_case = TRUE))
+    &amp;
+    str_detect(namefirst, regex(&quot;^sam&quot;, ignore_case=TRUE))
+         )</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gYG11dGF0ZSgpYDpcbuKEuSBJbiBhcmd1bWVudDogYGFzX2RhdGUobWR5X2htKEFQUFRfTUFERV9EQVRFKSlgLlxuQ2F1c2VkIGJ5IGVycm9yIGluIGBoKClgOlxuISBlcnJvciBpbiBldmFsdWF0aW5nIHRoZSBhcmd1bWVudCAneCcgaW4gc2VsZWN0aW5nIGEgbWV0aG9kIGZvciBmdW5jdGlvbiAnYXNfZGF0ZSc6IG9iamVjdCAnQVBQVF9NQURFX0RBVEUnIG5vdCBmb3VuZFxuQmFja3RyYWNlOlxuICAxLiBkcGx5cjo6bXV0YXRlKC4uLilcbiAxOS4gYmFzZTo6LmhhbmRsZVNpbXBsZUVycm9yKC4uLilcbiAyMC4gYmFzZSAobG9jYWwpIGgoc2ltcGxlRXJyb3IobXNnLCBjYWxsKSlcbiJ9 -->
-<pre><code>Error in `mutate()`:
-ℹ In argument: `as_date(mdy_hm(APPT_MADE_DATE))`.
-Caused by error in `h()`:
-! error in evaluating the argument &#39;x&#39; in selecting a method for function &#39;as_date&#39;: object &#39;APPT_MADE_DATE&#39; not found
-Backtrace:
-  1. dplyr::mutate(...)
- 19. base::.handleSimpleError(...)
- 20. base (local) h(simpleError(msg, call))</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>That shows us Samuel Altman. Makes sense. But what escapes me is that
+there is a Samuel N Altman and a Samuel H Altman. Theoretically, these
+should be two different people but when I search “samuel n altman
+-openai” with google, I get an Ancestry.com record for someone who was
+counted in the 1940 census, Samuel Altman the shift leader at
+Wallgreens, Samuel Altman the landscaper, Samuel Altman the president of
+a bio-nutrition labratory and Samuel Altman the lawyer in Georgia. None
+of those seem likely to visit the White House so it might just be a
+typographical error. Anyhow, assuming all of them are Samuel Altman, CEO
+of OpenAI:</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKYXV0aG9yczogVGF5bG9yLCBNZW5uYSwgU2hhdW4sIEpvZWwKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KGphbml0b3IpCmxpYnJhcnkobHVicmlkYXRlKQpgYGAKCgpgYGB7cn0KIyMgc2V0IHdvcmtpbmcgZGlyZWN0b3J5CiMjIHNldHdkKCJ+L0dvb2dsZSBEcml2ZS9NeSBEcml2ZS9KT1VSNDcyL2RhdGFfam91cm5hbGlzbV8yMDIzX2ZhbGwvd2hpdGVfaG91c2VfdmlzaXRvcl9sb2dzIikKCndoX3Zpc2l0b3JfZGF0YSA8LSByZWFkX2NzdigiZGF0YS9jb21iaW5lZC5jc3YiKQp3aF92aXNpdG9yX2RhdGEgPC0gd2hfdmlzaXRvcl9kYXRhIHw+IAogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9NQURFX0RBVEUpKSkgfD4gICMjIHdoZW4gSSBydW4gdGhpcywgUiB3b3JrcyBidXQgdGVsbHMgbWUgdGhhdCAiMTQgZmFpbGVkIHRvIHBhcnNlLiIgSSBjYW5ub3QgZm9yIHRoZSBsaWZlIG9mIG1lIGZpZ3VyZSBvdXQgd2hhdCBpdCdzIHVuaGFwcHkgYWJvdXQgCiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShUT0EpKSkgfD4gCiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShUT0QpKSkgfD4KICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5X2htKEFQUFRfU1RBUlRfREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9FTkRfREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9DQU5DRUxfREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oTEFTVEVOVFJZREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHkoUkVMRUFTRURBVEUpKSkgfD4gCiMjIEknbSBzdXJlIHRoZXJlJ3MgYSB3YXkgdG8gZ2V0IGl0IHRvIG5vdCBwdXQgaXQgaW4gYSBuZXcgY29sdW1uIGJ1dCBJIGNhbid0IGZpZ3VyZSBvdXQgaG93IC0gSSBrbm93IG11dGF0ZSBtZWFucyBpdCB3aWxsIGNvbnZlcnQgaW50byBhIG5ldyBjb2x1bW4gYnV0Li4uaXQgZG9lc24ndCB3b3JrIHdpdGhvdXQgdGhlICJtdXRhdGUuIiBJIGR1bm5vLgogIGNsZWFuX25hbWVzKCkKCmBgYApMZXQncyBzZWUgd2hlbiB0aGUgbW9zdCBwb3B1bGFyIGRheSBmb3IgdmlzaXRpbmcgd2FzLiBUbyBkbyB0aGF0LCBmaXJzdCB3ZSdyZSBnb2luZyB0byBjcmVhdGUgbmV3IGNvbHVtbnMgd2l0aCBvbmx5IHRoZSBkYXRlcy4KYGBge3J9CndoX3Zpc2l0b3JfZGF0YSA8LSB3aF92aXNpdG9yX2RhdGEgfD4gCiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX01BREVfREFURSkpKSB8PiAgIyMgd2hlbiBJIHJ1biB0aGlzLCBSIHdvcmtzIGJ1dCB0ZWxscyBtZSB0aGF0ICIxNCBmYWlsZWQgdG8gcGFyc2UuIiBJIGNhbm5vdCBmb3IgdGhlIGxpZmUgb2YgbWUgZmlndXJlIG91dCB3aGF0IGl0J3MgdW5oYXBweSBhYm91dCAKICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5KFRPQSkpKSB8PiAKICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5KFRPRCkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHkoQVBQVF9TVEFSVF9EQVRFKSkpIHw+CiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShBUFBUX0VORF9EQVRFKSkpIHw+CiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShBUFBUX0NBTkNFTF9EQVRFKSkpIHw+CiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShMQVNURU5UUllEQVRFKSkpIAoKIyBJJ20gcnVubmluZyBpbnRvIGFuIGVycm9yIGhlcmUsIEknbSBub3QgcXVpdGUgc3VyZSBob3cgdG8gZml4IGl0IC0gaXQgZG9lcyBub3QgKGxpa2UgaXQgZGlkIGJlZm9yZSkgbWFrZSBuZXcgY29sdW1ucyBhcyBJJ3ZlIGFza2VkIGl0IHRvLCBqdXN0IHRoaXMgdGltZSB3aXRob3V0IHRoZSB0aW1lLiBBY2NvcmRpbmcgdG8gdGhlIEx1YnJpZGF0ZSBjaGVhdHNoZWF0LCBteSBjb2RlIHNob3VsZCB3b3JrIHNvIEkgZHVubm8gKGFzIHVzdWFsKS4gSSB0cmllZCB0ZWxsaW5nIGl0ICJhc19kYXRlIiBidXQgdGhhdCB0aHJldyB0aGUgZm9sbG93aW5nIGVycm9yOgojIEVycm9yIGluIG11dGF0ZSh3aF92aXNpdG9yX2RhdGEsIGFzX2RhdGUobWR5X2htKEFQUFRfTUFERV9EQVRFKSkpIDogCiMgQ2F1c2VkIGJ5IGVycm9yIGluIGBoKClgOgojICEgZXJyb3IgaW4gZXZhbHVhdGluZyB0aGUgYXJndW1lbnQgJ3gnIGluIHNlbGVjdGluZyBhIG1ldGhvZCBmb3IgZnVuY3Rpb24gJ2FzX2RhdGUnOiBvYmplY3QgJ0FQUFRfTUFERV9EQVRFJyBub3QgZm91bmQKIyBXaGVuZXZlciBJJ3ZlIGZpeGVkIHRoZSBhYm92ZSBwcm9ibGVtcywgaGVyZSdzIHdoYXQgSSdkIGRvIG5leHQ6Cgp3aF92aXNpdG9yX2RhdGEKICBncm91cF9ieShkYXRlX29mX3Zpc2l0KSB8PiAKICBzdW1tYXJpemUoY291bnQ9bigpKQogIAojIG9uY2Ugd2UndmUgZmlndXJlZCBvdXQgdGhlIGFib3ZlIGhlYWRhY2hlcyB0aGF0IHNob3VsZCB3b3JrIGZpbmUuCmBgYAoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKYXV0aG9yczogVGF5bG9yLCBNZW5uYSwgU2hhdW4sIEpvZWwKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KGphbml0b3IpCmxpYnJhcnkobHVicmlkYXRlKQpgYGAKCgpgYGB7cn0KIyMgc2V0IHdvcmtpbmcgZGlyZWN0b3J5CiMjIHNldHdkKCJ+L0dvb2dsZSBEcml2ZS9NeSBEcml2ZS9KT1VSNDcyL2RhdGFfam91cm5hbGlzbV8yMDIzX2ZhbGwvd2hpdGVfaG91c2VfdmlzaXRvcl9sb2dzIikKCndoX3Zpc2l0b3JfZGF0YSA8LSByZWFkX2NzdigiZGF0YS9jb21iaW5lZC5jc3YiKQp3aF92aXNpdG9yX2RhdGEgPC0gd2hfdmlzaXRvcl9kYXRhIHw+IAogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9NQURFX0RBVEUpKSkgfD4gICMjIHdoZW4gSSBydW4gdGhpcywgUiB3b3JrcyBidXQgdGVsbHMgbWUgdGhhdCAiMTQgZmFpbGVkIHRvIHBhcnNlLiIgSSBjYW5ub3QgZm9yIHRoZSBsaWZlIG9mIG1lIGZpZ3VyZSBvdXQgd2hhdCBpdCdzIHVuaGFwcHkgYWJvdXQgCiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShUT0EpKSkgfD4gCiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShUT0QpKSkgfD4KICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5X2htKEFQUFRfU1RBUlRfREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9FTkRfREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oQVBQVF9DQU5DRUxfREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHlfaG0oTEFTVEVOVFJZREFURSkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHkoUkVMRUFTRURBVEUpKSkgfD4gCiMjIEknbSBzdXJlIHRoZXJlJ3MgYSB3YXkgdG8gZ2V0IGl0IHRvIG5vdCBwdXQgaXQgaW4gYSBuZXcgY29sdW1uIGJ1dCBJIGNhbid0IGZpZ3VyZSBvdXQgaG93IC0gSSBrbm93IG11dGF0ZSBtZWFucyBpdCB3aWxsIGNvbnZlcnQgaW50byBhIG5ldyBjb2x1bW4gYnV0Li4uaXQgZG9lc24ndCB3b3JrIHdpdGhvdXQgdGhlICJtdXRhdGUuIiBJIGR1bm5vLgogIGNsZWFuX25hbWVzKCkKCmBgYApMZXQncyBzZWUgd2hlbiB0aGUgbW9zdCBwb3B1bGFyIGRheSBmb3IgdmlzaXRpbmcgd2FzLiBUbyBkbyB0aGF0LCBmaXJzdCB3ZSdyZSBnb2luZyB0byBjcmVhdGUgbmV3IGNvbHVtbnMgd2l0aCBvbmx5IHRoZSBkYXRlcy4KYGBge3J9CndoX3Zpc2l0b3JfZGF0YSA8LSB3aF92aXNpdG9yX2RhdGEgfD4gCiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keV9obShBUFBUX01BREVfREFURSkpKSB8PiAgIyMgd2hlbiBJIHJ1biB0aGlzLCBSIHdvcmtzIGJ1dCB0ZWxscyBtZSB0aGF0ICIxNCBmYWlsZWQgdG8gcGFyc2UuIiBJIGNhbm5vdCBmb3IgdGhlIGxpZmUgb2YgbWUgZmlndXJlIG91dCB3aGF0IGl0J3MgdW5oYXBweSBhYm91dCAKICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5KFRPQSkpKSB8PiAKICBtdXRhdGUoYXNfZGF0ZXRpbWUobWR5KFRPRCkpKSB8PgogIG11dGF0ZShhc19kYXRldGltZShtZHkoQVBQVF9TVEFSVF9EQVRFKSkpIHw+CiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShBUFBUX0VORF9EQVRFKSkpIHw+CiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShBUFBUX0NBTkNFTF9EQVRFKSkpIHw+CiAgbXV0YXRlKGFzX2RhdGV0aW1lKG1keShMQVNURU5UUllEQVRFKSkpIAoKIyBJJ20gcnVubmluZyBpbnRvIGFuIGVycm9yIGhlcmUsIEknbSBub3QgcXVpdGUgc3VyZSBob3cgdG8gZml4IGl0IC0gaXQgZG9lcyBub3QgKGxpa2UgaXQgZGlkIGJlZm9yZSkgbWFrZSBuZXcgY29sdW1ucyBhcyBJJ3ZlIGFza2VkIGl0IHRvLCBqdXN0IHRoaXMgdGltZSB3aXRob3V0IHRoZSB0aW1lLiBBY2NvcmRpbmcgdG8gdGhlIEx1YnJpZGF0ZSBjaGVhdHNoZWF0LCBteSBjb2RlIHNob3VsZCB3b3JrIHNvIEkgZHVubm8gKGFzIHVzdWFsKS4gSSB0cmllZCB0ZWxsaW5nIGl0ICJhc19kYXRlIiBidXQgdGhhdCB0aHJldyB0aGUgZm9sbG93aW5nIGVycm9yOgojIEVycm9yIGluIG11dGF0ZSh3aF92aXNpdG9yX2RhdGEsIGFzX2RhdGUobWR5X2htKEFQUFRfTUFERV9EQVRFKSkpIDogCiMgQ2F1c2VkIGJ5IGVycm9yIGluIGBoKClgOgojICEgZXJyb3IgaW4gZXZhbHVhdGluZyB0aGUgYXJndW1lbnQgJ3gnIGluIHNlbGVjdGluZyBhIG1ldGhvZCBmb3IgZnVuY3Rpb24gJ2FzX2RhdGUnOiBvYmplY3QgJ0FQUFRfTUFERV9EQVRFJyBub3QgZm91bmQKIyBXaGVuZXZlciBJJ3ZlIGZpeGVkIHRoZSBhYm92ZSBwcm9ibGVtcywgaGVyZSdzIHdoYXQgSSdkIGRvIG5leHQ6Cgp3aF92aXNpdG9yX2RhdGEKICBncm91cF9ieShkYXRlX29mX3Zpc2l0KSB8PiAKICBzdW1tYXJpemUoY291bnQ9bigpKQogIAojIG9uY2Ugd2UndmUgZmlndXJlZCBvdXQgdGhlIGFib3ZlIGhlYWRhY2hlcyB0aGF0IHNob3VsZCB3b3JrIGZpbmUuCmBgYApMZXQncyBzZWUgaWYgd2UgY2FuIGZpbmQgd2hldGhlciBPcGVuQUkgbG9iYnlpc3RzIHZpc2l0ZWQgdGhlIHByZXNpZGVudC4KQWNjb3JkaW5nIHRvIFBvbGl0aWNvLCBoZXJlIGFyZSB0aGUgaGFuZGZ1bCBvZiBsb2JieWlzdHMgdGhlIGNvbXBhbnkgaGFzOgotICAgVG9ueSBTYW1wCi0gICBDaGFuIFBhcmsKVGhlIFBvbGl0aWNvIHN0b3J5IHNheXMgdGhhdCB0aG9zZSB0d28gb25seSBzdGFydGVkIGFzIE9wZW5BSSBsb2JieWlzdHMgaW4gT2N0b2JlciBzbyB0aGF0IGRvZXNuJ3QgaGVscCB1cy4KTGV0J3MgdHJ5IGxvb2tpbmcgZm9yIHRoZSBDRU8sIFNhbXVlbCBIIEFsdG1hbi4KYGBge3J9CmNsZWFuX3doX3Zpc2l0b3JfZGF0YSB8PiAKICBmaWx0ZXIoCiAgICBzdHJfZGV0ZWN0KG5hbWVsYXN0LCByZWdleCgiYWx0bWFuIiwgaWdub3JlX2Nhc2UgPSBUUlVFKSkKICAgICYKICAgIHN0cl9kZXRlY3QobmFtZWZpcnN0LCByZWdleCgiXnNhbSIsIGlnbm9yZV9jYXNlPVRSVUUpKQogICAgICAgICApCmBgYApUaGF0IHNob3dzIHVzIFNhbXVlbCBBbHRtYW4uCk1ha2VzIHNlbnNlLgpCdXQgd2hhdCBlc2NhcGVzIG1lIGlzIHRoYXQgdGhlcmUgaXMgYSBTYW11ZWwgTiBBbHRtYW4gYW5kIGEgU2FtdWVsIEggQWx0bWFuLgpUaGVvcmV0aWNhbGx5LCB0aGVzZSBzaG91bGQgYmUgdHdvIGRpZmZlcmVudCBwZW9wbGUgYnV0IHdoZW4gSSBzZWFyY2ggInNhbXVlbCBuIGFsdG1hbiAtb3BlbmFpIiB3aXRoIGdvb2dsZSwgSSBnZXQgYW4gQW5jZXN0cnkuY29tIHJlY29yZCBmb3Igc29tZW9uZSB3aG8gd2FzIGNvdW50ZWQgaW4gdGhlIDE5NDAgY2Vuc3VzLCBTYW11ZWwgQWx0bWFuIHRoZSBzaGlmdCBsZWFkZXIgYXQgV2FsbGdyZWVucywgU2FtdWVsIEFsdG1hbiB0aGUgbGFuZHNjYXBlciwgU2FtdWVsIEFsdG1hbiB0aGUgcHJlc2lkZW50IG9mIGEgYmlvLW51dHJpdGlvbiBsYWJyYXRvcnkgYW5kIFNhbXVlbCBBbHRtYW4gdGhlIGxhd3llciBpbiBHZW9yZ2lhLgpOb25lIG9mIHRob3NlIHNlZW0gbGlrZWx5IHRvIHZpc2l0IHRoZSBXaGl0ZSBIb3VzZSBzbyBpdCBtaWdodCBqdXN0IGJlIGEgdHlwb2dyYXBoaWNhbCBlcnJvci4KQW55aG93LCBhc3N1bWluZyBhbGwgb2YgdGhlbSBhcmUgU2FtdWVsIEFsdG1hbiwgQ0VPIG9mIE9wZW5BSToK</div>
 
 
 
