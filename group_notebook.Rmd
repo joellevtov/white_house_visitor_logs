@@ -111,3 +111,44 @@ clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
 
 ```
 
+1. What are the most popular months and dates? What political events correlate with those?
+
+```{r}
+#top 5 dates for visitors
+
+
+```
+
+2. Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
+
+```{r}
+
+```
+
+
+3. West Wing Tours are selective, how many are being taken?
+
+```{r}
+
+```
+
+
+4. Who has sponsored the most White House visitors?
+
+```{r}
+
+```
+
+
+5. What percent of visitors have just been labeled “office visitors”?
+
+```{r}
+
+```
+
+
+6. How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
+```{r}
+
+```
+
