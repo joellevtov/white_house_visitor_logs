@@ -72,3 +72,58 @@ But what escapes me is that there is a Samuel N Altman and a Samuel H Altman.
 Theoretically, these should be two different people but when I search "samuel n altman -openai" with google, I get an Ancestry.com record for someone who was counted in the 1940 census, Samuel Altman the shift leader at Wallgreens, Samuel Altman the landscaper, Samuel Altman the president of a bio-nutrition labratory and Samuel Altman the lawyer in Georgia.
 None of those seem likely to visit the White House so it might just be a typographical error.
 Anyhow, assuming all of them are Samuel Altman, CEO of OpenAI:
+
+What are the most popular months and dates? What political events correlate with those?
+
+{r}
+#top 5 dates for visitors
+
+
+Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
+
+```{r}
+
+```
+
+
+West Wing Tours are selective, how many are being taken?
+
+```{r}
+
+```
+
+
+Who has sponsored the most White House visitors?
+
+```{r}
+
+```
+
+
+What percent of visitors have just been labeled "office visitors"?
+
+```{r}
+clean_wh_visitor_data %>%
+  filter(str_detect(visitee_namelast, "Office")) |> 
+  filter(str_detect(visitee_namefirst, "Visitors"))
+
+clean_wh_visitor_data |> 
+  group_by(visitee_namelast, visitee_namefirst) |> 
+  summarize(total_visits = n()) |> 
+  arrange(desc(total_visits))
+
+clean_wh_visitor_data |> 
+  group_by(vistitee_namefirst) 
+```
+
+
+
+How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
+
+```{r}
+
+```
+
+
+
+
