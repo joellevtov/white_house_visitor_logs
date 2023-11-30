@@ -15,9 +15,8 @@ library(janitor)
 library(lubridate)
 ```
 
-
 ```{r}
-
+###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
 wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
   mutate(toa = mdy_hm(toa)) |>
   mutate(tod = mdy_hm(tod)) |>
@@ -33,16 +32,29 @@ Let's take a quick look at the data now that we've changed these columns into da
 ```{r}
 glimpse(wh_visitor_data)
 ```
+Here are our new questions we'd like to answer:
+What are the most popular times / dates / months for White House visitors and how do they correlate with important political events?
+Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating) 
+West Wing Tours are selective, how many are being taken?
+Who has sponsored the most White House visitors - e.g. who is getting the most visitors?
+What percent of visitors have just been labeled “office visitors”? If it’s a significant percentage, that would seem to defeat the point of releasing these logs. Not much better than the Trump administration.
 
-There are a lot of NAs in here where dates should go. Also, the dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+Immediate limitations: 
+1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us.
+2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
+3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 
+4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations.
+5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here.
+6.  I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
 
 ```{r}
 # We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
 
 clean_wh_visitor_data <- wh_visitor_data |>
-  select(-poa, -access_type, -tod, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29)
-```
+  select(-poa, -access_type, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
 
+# Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
+```
 
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
 
@@ -50,8 +62,13 @@ Let's see when the most popular day for visiting was. To do that, first we're go
 
 ###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
 
-clean_wh_visitor_data |> 
+clean_wh_visitor_data <- clean_wh_visitor_data |>
   mutate(toa_date = ymd_hms(toa) |> date()) |>
+  mutate(tod_date = ymd_hms(tod) |>date())
+  
+####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
+
+clean_wh_visitor_data |>
   group_by(toa_date) |> 
   summarize(count=n()) |>
   arrange(desc(count))
@@ -64,6 +81,7 @@ wh_visitors_by_date <- clean_wh_visitor_data |>
   arrange(desc(total_visits))
 
 ### just kidding, there are a ton of NA dates still. maybe appt end date?
+
 wh_visitors_by_end_date <- clean_wh_visitor_data |>
   group_by(appt_end_date) |>
   summarize(total_visits = n()) |>
@@ -71,3 +89,8 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
 
 ### this seems better
 ```
+
+```{r}
+
+```
+

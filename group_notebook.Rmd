@@ -91,6 +91,7 @@ clean_wh_visitor_data |> filter(appt_end_date == 2023-07-26) |>
 
 ```{r}
 ###derek asked if the NA dates were specific to certain offices. how do we figure that out?
+
 clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
   group_by(meeting_loc) |>
   summarise(count = n())
@@ -100,11 +101,41 @@ clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
 1.  What are the most popular months and dates? What political events correlate with those?
 
 ```{r}
-#top 5 dates for visitors
 
+###mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
+clean_wh_visitor_data |>
+  group_by(toa_date) |> 
+  summarize(count=n()) |>
+  arrange(desc(count))
+  
+# note - since there are so many NA dates here, I think we should group by appt date.
+
+wh_visitors_by_date <- clean_wh_visitor_data |>
+  group_by(appt_start_date) |>
+  summarize(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+### just kidding, there are a ton of NA dates still. maybe appt end date?
+
+wh_visitors_by_end_date <- clean_wh_visitor_data |>
+  group_by(appt_end_date) |>
+  summarize(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+### this seems better
 ```
 
+Top 5 Dates: 
+1. 06-22-2023: President Biden and Prime Minister Modi of the Republic of India in Joint Press Conference
+2. 12-23-2022: President Biden passes a successful bipartisan funding bill
+3. 04-26-2023:President Biden and President Yoon Suk Yeol of the Republic of Korea to commemorate the 70th anniversary of their alliance
+4. 07-04-2023: Independence Day event at the White House hosted by President Biden and First Lady Jill Biden (recurring date with a big total of visitors)
+5. 12-13-2022: President Biden signs the Respect for Marriage Act, legalizing gay marriage
+
+This is actually pretty interesting! It's somewhat surprising that the top date doesn't solely have to do with the United States itself, but I remember driving through Capitol Hill several times that week and seeing the huge impact (both good and bad) that Modi's visit had on the city. The majority of these highest visited dates correlate with important international visits, United States-specific holidays, and the passage of significant things into law.
+
+```
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
 ```{r}
@@ -131,11 +162,7 @@ clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
 
-```{r}
-
-```
-
-Let's see if we can find whether OpenAI lobbyists visited the president.According to Politico, here are the handful of lobbyists the company has:- Tony Samp- Chan ParkThe Politico story says that those two only started as OpenAI lobbyists in October so that doesn't help us.Let's try looking for the CEO, Samuel H Altman.
+Let's see if we can find whether OpenAI lobbyists visited the president. According to Politico, there are the handful of lobbyists the company has:- Tony Samp- Chan ParkThe Politico story says that those two only started as OpenAI lobbyists in October so that doesn't help us.Let's try looking for the CEO, Samuel H Altman.
 
 ```{r}
 clean_wh_visitor_data |> 
