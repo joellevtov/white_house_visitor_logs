@@ -27,31 +27,22 @@ wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
   mutate(releasedate = mdy(releasedate)) 
   
 ```
+
 Let's take a quick look at the data now that we've changed these columns into dates.
 
 ```{r}
 glimpse(wh_visitor_data)
 ```
-Here are our new questions we'd like to answer:
-What are the most popular times / dates / months for White House visitors and how do they correlate with important political events?
-Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating) 
-West Wing Tours are selective, how many are being taken?
-Who has sponsored the most White House visitors - e.g. who is getting the most visitors?
-What percent of visitors have just been labeled “office visitors”? If it’s a significant percentage, that would seem to defeat the point of releasing these logs. Not much better than the Trump administration.
 
-Immediate limitations: 
-1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us.
-2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that.
-3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 
-4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations.
-5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here.
-6.  I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
+Here are our new questions we'd like to answer: What are the most popular times / dates / months for White House visitors and how do they correlate with important political events? Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating) West Wing Tours are selective, how many are being taken? Who has sponsored the most White House visitors - e.g. who is getting the most visitors? What percent of visitors have just been labeled "office visitors"? If it's a significant percentage, that would seem to defeat the point of releasing these logs. Not much better than the Trump administration.
+
+Immediate limitations: 1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us. 2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that. 3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations. 5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here. 6. I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
 
 ```{r}
 # We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
 
 clean_wh_visitor_data <- wh_visitor_data |>
-  select(-poa, -access_type, -pod, -appt_cancel_date, -meeting_room, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
+  select(-poa, -access_type, -pod, -appt_cancel_date, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
 
 # Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
 ```
@@ -59,13 +50,14 @@ clean_wh_visitor_data <- wh_visitor_data |>
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
 
 ```{r}
-
 ###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
 
 clean_wh_visitor_data <- clean_wh_visitor_data |>
   mutate(toa_date = ymd_hms(toa) |> date()) |>
   mutate(tod_date = ymd_hms(tod) |>date())
-  
+```
+
+```{r}
 ####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
 clean_wh_visitor_data |>
@@ -91,6 +83,94 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
 ```
 
 ```{r}
+clean_wh_visitor_data |> filter(appt_end_date == 2023-07-26) |>
+  group_by(meeting_room) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+```
+
+```{r}
+###derek asked if the NA dates were specific to certain offices. how do we figure that out?
+
+clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
+  group_by(meeting_loc) |>
+  summarise(count = n())
 
 ```
 
+1.  What are the most popular months and dates? What political events correlate with those?
+
+Top 5 Dates: 
+1. 06-22-2023: President Biden and Prime Minister Modi of the Republic of India in Joint Press Conference
+2. 12-23-2022: President Biden passes a successful bipartisan funding bill
+3. 04-26-2023:President Biden and President Yoon Suk Yeol of the Republic of Korea to commemorate the 70th anniversary of their alliance
+4. 07-04-2023: Independence Day event at the White House hosted by President Biden and First Lady Jill Biden (recurring date with a big total of visitors)
+5. 12-13-2022: President Biden signs the Respect for Marriage Act, legalizing gay marriage
+
+This is actually pretty interesting! It's somewhat surprising that the top date doesn't solely have to do with the United States itself, but I remember driving through Capitol Hill several times that week and seeing the huge impact (both good and bad) that Modi's visit had on the city. The majority of these highest visited dates correlate with important international visits, United States-specific holidays, and the passage of significant things into law.
+
+```{r}
+
+###mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
+
+clean_wh_visitor_data |>
+  group_by(toa_date) |> 
+  summarize(count=n()) |>
+  arrange(desc(count))
+  
+# note - since there are so many NA dates here, I think we should group by appt date.
+
+wh_visitors_by_date <- clean_wh_visitor_data |>
+  group_by(appt_start_date) |>
+  summarize(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+### just kidding, there are a ton of NA dates still. maybe appt end date?
+
+wh_visitors_by_end_date <- clean_wh_visitor_data |>
+  group_by(appt_end_date) |>
+  summarize(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+### this seems better
+```
+
+```
+2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
+
+```{r}
+
+```
+
+3.  West Wing Tours are selective, how many are being taken?
+
+```{r}
+
+```
+
+4.  Who has sponsored the most White House visitors?
+
+```{r}
+
+```
+
+5.  What percent of visitors have just been labeled "office visitors"?
+
+```{r}
+
+```
+
+6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
+
+Let's see if we can find whether OpenAI lobbyists visited the president. According to Politico, there are the handful of lobbyists the company has:- Tony Samp- Chan ParkThe Politico story says that those two only started as OpenAI lobbyists in October so that doesn't help us.Let's try looking for the CEO, Samuel H Altman.
+
+```{r}
+clean_wh_visitor_data |> 
+  filter(
+    str_detect(namelast, regex("altman", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^sam", ignore_case=TRUE))
+         )
+```
+
+That shows us Samuel Altman.Makes sense.But what escapes me is that there is a Samuel N Altman and a Samuel H Altman.Theoretically, these should be two different people but when I search "samuel n altman -openai" with google, I get an Ancestry.com record for someone who was counted in the 1940 census, Samuel Altman the shift leader at Wallgreens, Samuel Altman the landscaper, Samuel Altman the president of a bio-nutrition labratory and Samuel Altman the lawyer in Georgia.None of those seem likely to visit the White House so it might just be a typographical error.Anyhow, assuming all of them are Samuel Altman, CEO of OpenAI:
