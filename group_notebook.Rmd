@@ -98,7 +98,7 @@ clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
 
 ```
 
-1.  What are the most popular months and dates? What political events correlate with those?
+1.  What are the most popular months and dates? What political events correlate with those? 
 
 ```{r}
 
@@ -127,6 +127,7 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
 ```
 
 Top 5 Dates: 
+
 1. 06-22-2023: President Biden and Prime Minister Modi of the Republic of India in Joint Press Conference
 2. 12-23-2022: President Biden passes a successful bipartisan funding bill
 3. 04-26-2023:President Biden and President Yoon Suk Yeol of the Republic of Korea to commemorate the 70th anniversary of their alliance
@@ -134,6 +135,25 @@ Top 5 Dates:
 5. 12-13-2022: President Biden signs the Respect for Marriage Act, legalizing gay marriage
 
 This is actually pretty interesting! It's somewhat surprising that the top date doesn't solely have to do with the United States itself, but I remember driving through Capitol Hill several times that week and seeing the huge impact (both good and bad) that Modi's visit had on the city. The majority of these highest visited dates correlate with important international visits, United States-specific holidays, and the passage of significant things into law.
+
+We think it may actually be more interesting to look at data where groups were less than 100 because those may be attributed to big events or holidays, which we could have guessed. What are the most popular dates and months for regular folks?
+
+```{r}
+clean_wh_visitor_data |>
+  group_by(appt_end_date) |> 
+  filter(total_people <100) |>
+  summarize(count=n()) |>
+  arrange(desc(count))
+```
+Top 5 Dates: 
+
+1. 12-23-2022: President Biden passes a successful bipartisan funding bill
+2. 03-18-2023: literally NO idea nothing is showing up (pls help)
+3. 05-11-2023: This was a big day at The House because the Biden-Harris Administration made a lot of big decisions about Global Health, Environmental Protection and National Conservation, Immigration, and International/National Emergency Funding
+4. 03-25-2023: President Biden and President Alberto Fernandez of Argentina 
+5. 05-12-2023: Continuation of the decisions made on 5/11, as well as the start of Infrastructure Week.
+
+This is so interesting because, aside from 12/23, none of the dates repeat in the data without big organized groups. This shows that big organized groups frequently visit on holidays and days with big international repercussions, while more national-focused events and big decisions are primarily attended by individuals or folks in smaller groups.
 
 ```
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
