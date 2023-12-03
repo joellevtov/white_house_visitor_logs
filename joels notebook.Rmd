@@ -17,18 +17,30 @@ library(lubridate)
 
 wh_visitor_data <- read_csv("data/combined.csv")
 wh_visitor_data <- wh_visitor_data |> 
-  mutate(as_datetime(mdy_hm(APPT_MADE_DATE))) |>  ## when I run this, R works but tells me that "14 failed to parse." I cannot for the life of me figure out what it's unhappy about 
-  mutate(as_datetime(mdy_hm(TOA))) |> 
-  mutate(as_datetime(mdy_hm(TOD))) |>
-  mutate(as_datetime(mdy_hm(APPT_START_DATE))) |>
-  mutate(as_datetime(mdy_hm(APPT_END_DATE))) |>
-  mutate(as_datetime(mdy_hm(APPT_CANCEL_DATE))) |>
-  mutate(as_datetime(mdy_hm(LASTENTRYDATE))) |>
-  mutate(as_datetime(mdy(RELEASEDATE))) |> 
+  mutate(as_datetime(mdy_hm(APPT_END_DATE))) |>   ## when I run this, R works but tells me that "14 failed to parse." I cannot for the life of me figure out what it's unhappy about 
+# mutate(as_datetime(mdy_hm(TOA))) |> 
+#  mutate(as_datetime(mdy_hm(TOD))) |>
+#  mutate(as_datetime(mdy_hm(APPT_START_DATE))) |>
+#  mutate(as_datetime(mdy_hm(APPT_END_DATE))) |>
+#  mutate(as_datetime(mdy_hm(APPT_CANCEL_DATE))) |>
+# mutate(as_datetime(mdy_hm(LASTENTRYDATE))) |>
+# mutate(as_datetime(mdy(RELEASEDATE))) |> 
 ## I'm sure there's a way to get it to not put it in a new column but I can't figure out how - I know mutate means it will convert into a new column but...it doesn't work without the "mutate." I dunno.
   clean_names()
 
 ```
+```{r}
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(as_datetime(mdy_hm(appt_end_date)))
+
+wh_visitor_data |> 
+  mutate(date = as_date(as_datetime(mdy_hm(appt_end_date)))) |> 
+  filter(str_detect(date, "2023-07-02")) |> 
+  group_by(date) |> 
+  summarize(count=n())
+```
+So 324 people visited the white house on cocaine day.
+
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
 ```{r}
 wh_visitor_data <- wh_visitor_data |> 
@@ -46,7 +58,7 @@ wh_visitor_data <- wh_visitor_data |>
 # ! error in evaluating the argument 'x' in selecting a method for function 'as_date': object 'APPT_MADE_DATE' not found
 # Whenever I've fixed the above problems, here's what I'd do next:
 
-wh_visitor_data
+wh_visitor_data |> 
   group_by(date_of_visit) |> 
   summarize(count=n())
   
@@ -103,11 +115,16 @@ Who has sponsored the most White House visitors?
 What percent of visitors have just been labeled "office visitors"?
 
 ```{r}
-clean_wh_visitor_data %>%
-  filter(str_detect(visitee_namelast, "Office")) |> 
-  filter(str_detect(visitee_namefirst, "Visitors"))
+wh_visitor_data %>%
+  filter(str_detect(visitee_namelast, regex("office", ignore_case = TRUE))) |> 
+  filter(str_detect(visitee_namefirst, regex("visitors", ignore_case = TRUE))) |> 
+  summarize(count = n())  
+# result - 462349 entries with just that office visitors bs
+  
+wh_visitor_data |> 
+  mutate()
 
-clean_wh_visitor_data |> 
+wh_visitor_data |> 
   group_by(visitee_namelast, visitee_namefirst) |> 
   summarize(total_visits = n()) |> 
   arrange(desc(total_visits))

@@ -2,3 +2,5 @@
 data/cleaned OPENREFINE.csv
 data/.DS_Store
 data/clean_wh_visitor_data.csv
+.RData
+.Rhistory
