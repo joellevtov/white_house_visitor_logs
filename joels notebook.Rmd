@@ -37,7 +37,7 @@ wh_visitor_data |>
   mutate(date = as_date(as_datetime(mdy_hm(appt_end_date)))) |> 
   filter(str_detect(date, "2023-07-02")) |> 
   group_by(date) |> 
-  summarize(count=n())
+  summarize(sum= sum(total_people))
 ```
 So 324 people visited the white house on cocaine day.
 

@@ -9,6 +9,8 @@ authors: Taylor, Menna, Shaun, Joel
 output: html_notebook
 ---
 
+Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW1s5KP2PIQM/edit?usp=sharing 
+
 ```{r}
 library(tidyverse)
 library(janitor)
@@ -116,6 +118,16 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
+# July 2 calculation
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(as_datetime(mdy_hm(appt_end_date)))
+
+wh_visitor_data |> 
+  mutate(date = as_date(as_datetime(mdy_hm(appt_end_date)))) |> 
+  filter(str_detect(date, "2023-07-02")) |> 
+  group_by(date) |> 
+  summarize(sum= sum(total_people))
+
 ### this seems better
 ```
 
@@ -126,6 +138,8 @@ Top 5 Dates:
 3. 04-26-2023:President Biden and President Yoon Suk Yeol of the Republic of Korea to commemorate the 70th anniversary of their alliance
 4. 07-04-2023: Independence Day event at the White House hosted by President Biden and First Lady Jill Biden (recurring date with a big total of visitors)
 5. 12-13-2022: President Biden signs the Respect for Marriage Act, legalizing gay marriage
+
+Another important date: July 2, the day cocaine was found in the White House.
 
 This is actually pretty interesting! It's somewhat surprising that the top date doesn't solely have to do with the United States itself, but I remember driving through Capitol Hill several times that week and seeing the huge impact (both good and bad) that Modi's visit had on the city. The majority of these highest visited dates correlate with important international visits, United States-specific holidays, and the passage of significant things into law.
 
@@ -242,6 +256,13 @@ open_refine_cleaned_visitors |> group_by(VISITEE_NAMELAST_CLEAN, VISITEE_NAMEFIR
 5.  What percent of visitors have just been labeled "office visitors"?
 
 ```{r}
+wh_visitor_data %>%
+  filter(str_detect(visitee_namelast, regex("office", ignore_case = TRUE))) |> 
+  filter(str_detect(visitee_namefirst, regex("visitors", ignore_case = TRUE))) |> 
+  summarize(count = n())  
+# result - 462349 entries with just that office visitors bs
+  
+462349/847371
 ```
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
