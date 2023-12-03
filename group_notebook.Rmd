@@ -159,6 +159,80 @@ This is so interesting because, aside from 12/23, none of the dates repeat in th
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
 ```{r}
+### Note - asked ChatGPT how to make the month column have labels and gave it my mutate code creating a new col with lubridate
+
+#reading in approval ratings data from gallup
+approval_ratings <- read_csv("data/biden_approval_gallup.csv", col_names = FALSE)
+
+colnames(approval_ratings) <- c("poll_date", "rep_approval_pct", "ind_approval_pct", "dem_approval_pct")
+  
+approval_ratings <- approval_ratings |>
+  separate(poll_date, into = c("year", "month", sep = "-")) |>
+  select(year, month, rep_approval_pct, ind_approval_pct, dem_approval_pct)
+
+approval_ratings <- approval_ratings |>
+  mutate(date = paste(year, month, sep = " "))
+
+#making a df with top months for visitors
+wh_visitor_by_month <- wh_visitors_by_end_date |> 
+ mutate(date_time = ymd_hms(appt_end_date),
+  month = month.abb[month(appt_end_date)])
+
+wh_visitor_by_month <- wh_visitor_by_month |>
+  group_by(month) |>
+  summarise(total_visits = sum(total_visits))
+
+#last one not really helpful bc didn't sort by year. Now doing the same with year and month
+wh_visitors_month_year <- wh_visitors_by_end_date |> 
+ mutate(date_time = ymd_hms(appt_end_date),
+  month = month.abb[month(appt_end_date)],
+  year = year(date_time))
+
+top_months_by_year <- wh_visitors_month_year |>
+  group_by(year, month) |>
+   summarise(total_visits = sum(total_visits))
+
+```
+
+
+```{r}
+#not sure if that was useful. I think I need to join these dataframes. Asked chatgpt for help with this because I needed to join on the date column and didn't have one with year and month in it for top_months_by_year. Asked it: I want to create a date column that looks like this: 2022 Jan, 2022 Feb, 2022 March. Currently I have a year column that looks like this: 2022, 2022, 2022, and a month column that looks like this: Jan, Feb, March. How can I create this new column using r and the tidyverse?
+
+top_months_by_year <- top_months_by_year |>
+    mutate(date = as.Date(paste(year, month, "01"), format = "%Y %b %d"))
+
+approval_ratings <- approval_ratings |>
+  mutate(date = as.Date(paste(year, month, "01"), format = "%Y %b %d"))
+
+visits_by_month_ratings <- top_months_by_year |> 
+  left_join(approval_ratings, by = "date") |>
+  rename(year = year.x, month = month.x) |>
+  select(-year.y, -month.y) |>
+  na.omit(visits_by_month_ratings)
+
+```
+
+
+```{r}
+#note - chatgpt wrote this code for me, I wanted to put these on the same graph but couldn't figure out the scale part
+library(ggplot2)
+ggplot(visits_by_month_ratings, aes(x = date)) +
+  # Bar chart for total_visits
+  geom_bar(aes(y = total_visits), stat = "identity", fill = "darkgray") +
+  # Line graphs for approval_ratings
+  geom_line(aes(y = dem_approval_pct * max(total_visits) / max(dem_approval_pct)), color = "blue") +
+  geom_line(aes(y = ind_approval_pct * max(total_visits) / max(dem_approval_pct)), color = "darkgreen") +
+  geom_line(aes(y = rep_approval_pct * max(total_visits) / max(dem_approval_pct)), color = "red") +
+  # Y-axis scale for total_visits
+  scale_y_continuous(name = "Total Visits", breaks = seq(0, 70000, by = 10000)) +
+  # Secondary Y-axis scale for approval_rating
+  scale_y_continuous(
+    name = "Total Visits",
+    sec.axis = sec_axis(~ . * max(visits_by_month_ratings$dem_approval_pct) / max(visits_by_month_ratings$total_visits), name = "Dem Approval Rating")
+  ) +
+  theme_gray()
+
+#note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months?
 
 ```
 
