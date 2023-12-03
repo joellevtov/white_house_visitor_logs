@@ -230,15 +230,18 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
 ```
 
 4.  Who has sponsored the most White House visitors?
-I think we might need to abandon ship on this - it's a lot of cleaning and openrefine is super slow because our dataset is huge plus i think it's just biden. 
+This won't load properly because we have to upload the file and I missed a potus column when I was cleaning, but after office visitors, it's Biden, then Ed Teleky (17k visitors) and then Gionelly Mills (almost 13k visits).
 ```{r}
-open_refine_cleaned_visitors <- read_csv()
+open_refine_cleaned_visitors <- read_csv("data/open_refined_wh_data_combined.csv")
+
+open_refine_cleaned_visitors |> group_by(VISITEE_NAMELAST_CLEAN, VISITEE_NAMEFIRST_CLEAN) |>
+  summarise(visits = n()) |>
+  arrange(desc(visits))
 ```
 
 5.  What percent of visitors have just been labeled "office visitors"?
 
 ```{r}
-
 ```
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.

@@ -193,15 +193,19 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
 4. Who has sponsored the most White House visitors?
 
 ```{r}
-
 ### need to clean data in open refine :)
-top_visitees <- wh_visitor_data |> group_by(visitee_namelast, visitee_namefirst) |>
-  summarise(total_visits = n()) |>
-  arrange(desc(total_visits))
+open_refine_cleaned_visitors <- read_csv("data/open_refined_wh_data_combined.csv")
 ```
+
+```{r}
+open_refine_cleaned_visitors |> group_by(VISITEE_NAMELAST_CLEAN, VISITEE_NAMEFIRST_CLEAN) |>
+  summarise(visits = n()) |>
+  arrange(desc(visits))
+```
+
+5.  What percent of visitors have just been labeled "office visitors"?
 
 ```{r}
 
 ```
-
 
