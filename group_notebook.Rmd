@@ -220,7 +220,7 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
   ) +
   theme_gray()
 
-#note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months?
+#note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months? Also it wouldn't graph Dec 2022 which was the second highest month because of NA values in the approval ratings. @DEREK is there a way around this?
 ```
 
 3.  West Wing Tours are selective, how many are being taken?
@@ -230,9 +230,9 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
 ```
 
 4.  Who has sponsored the most White House visitors?
-
+I think we might need to abandon ship on this - it's a lot of cleaning and openrefine is super slow because our dataset is huge plus i think it's just biden. 
 ```{r}
-
+open_refine_cleaned_visitors <- read_csv()
 ```
 
 5.  What percent of visitors have just been labeled "office visitors"?
