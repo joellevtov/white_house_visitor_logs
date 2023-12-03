@@ -42,7 +42,7 @@ Immediate limitations: 1. There are a lot of NAs in here where dates should go. 
 # We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
 
 clean_wh_visitor_data <- wh_visitor_data |>
-  select(-poa, -access_type, -pod, -appt_cancel_date, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
+  select(-poa, -access_type, -pod, -appt_cancel_date, -caller_room, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
 
 # Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
 ```
@@ -82,12 +82,6 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
 ### this seems better
 ```
 
-```{r}
-clean_wh_visitor_data |> filter(appt_end_date == 2023-07-26) |>
-  group_by(meeting_room) |>
-  summarise(count = n()) |>
-  arrange(desc(count))
-```
 
 ```{r}
 ###derek asked if the NA dates were specific to certain offices. how do we figure that out?
@@ -95,7 +89,6 @@ clean_wh_visitor_data |> filter(appt_end_date == 2023-07-26) |>
 clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
   group_by(meeting_loc) |>
   summarise(count = n())
-
 ```
 
 1.  What are the most popular months and dates? What political events correlate with those? 
@@ -155,12 +148,10 @@ Top 5 Dates:
 
 This is so interesting because, aside from 12/23, none of the dates repeat in the data without big organized groups. This shows that big organized groups frequently visit on holidays and days with big international repercussions, while more national-focused events and big decisions are primarily attended by individuals or folks in smaller groups.
 
-```
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
 ```{r}
 ### Note - asked ChatGPT how to make the month column have labels and gave it my mutate code creating a new col with lubridate
-
 #reading in approval ratings data from gallup
 approval_ratings <- read_csv("data/biden_approval_gallup.csv", col_names = FALSE)
 
@@ -191,9 +182,7 @@ wh_visitors_month_year <- wh_visitors_by_end_date |>
 top_months_by_year <- wh_visitors_month_year |>
   group_by(year, month) |>
    summarise(total_visits = sum(total_visits))
-
 ```
-
 
 ```{r}
 #not sure if that was useful. I think I need to join these dataframes. Asked chatgpt for help with this because I needed to join on the date column and didn't have one with year and month in it for top_months_by_year. Asked it: I want to create a date column that looks like this: 2022 Jan, 2022 Feb, 2022 March. Currently I have a year column that looks like this: 2022, 2022, 2022, and a month column that looks like this: Jan, Feb, March. How can I create this new column using r and the tidyverse?
@@ -209,7 +198,6 @@ visits_by_month_ratings <- top_months_by_year |>
   rename(year = year.x, month = month.x) |>
   select(-year.y, -month.y) |>
   na.omit(visits_by_month_ratings)
-
 ```
 
 
@@ -233,7 +221,6 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
   theme_gray()
 
 #note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months?
-
 ```
 
 3.  West Wing Tours are selective, how many are being taken?
