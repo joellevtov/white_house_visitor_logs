@@ -121,16 +121,7 @@ wh_visitor_data %>%
   summarize(count = n())  
 # result - 462349 entries with just that office visitors bs
   
-wh_visitor_data |> 
-  mutate()
-
-wh_visitor_data |> 
-  group_by(visitee_namelast, visitee_namefirst) |> 
-  summarize(total_visits = n()) |> 
-  arrange(desc(total_visits))
-
-clean_wh_visitor_data |> 
-  group_by(vistitee_namefirst) 
+462349/847371
 ```
 
 
