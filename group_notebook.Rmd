@@ -119,16 +119,33 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
   arrange(desc(total_visits))
 
 # July 2 calculation
-wh_visitor_data <- wh_visitor_data |> 
-  mutate(as_datetime(mdy_hm(appt_end_date)))
-
 wh_visitor_data |> 
-  mutate(date = as_date(as_datetime(mdy_hm(appt_end_date)))) |> 
-  filter(str_detect(date, "2023-07-02")) |> 
+  filter(str_detect(appt_end_date, "2023-07-02")) |> 
   group_by(date) |> 
-  summarize(sum= sum(total_people))
+  summarize(sum= sum(total_people)) 
+# so 1994 people visited the white house on that date. let's check what the average amount of people on mondy is.
+wh_visitor_data |> 
+  mutate(day_of_week = wday(appt_end_date)) |> 
+  filter(day_of_week == 1) |> 
+  group_by(appt_end_date) |> 
+  summarize(total_people = sum(total_people)) |> 
+  filter(!is.na(total_people)) |> 
+  summary(round(total_people))
 
-### this seems better
+wh_visitors_per_day <- wh_visitor_data |> 
+  mutate(date = date(appt_end_date)) |> 
+  group_by(date) |> 
+  summarize(total_people = sum(total_people)) |> 
+  filter(!is.na(total_people)) 
+
+class(wh_visitors_per_day$date)
+  
+#answer - 33801 is the average number of visitors via the mean but that's thrown off by a couple days with an insanely high number of visitors. the median is more reasonable, 139. 	
+# funny. let's make a scatterplot with a line of best fit to see what the distribution is. perhaps the number of visitors has increased as time as went on?
+ggplot(data=wh_visitors_per_day) +
+  geom_point(aes(x=date, y=total_people))
+
+# It looks like the answer is not really. The days with tens of thousands of people seem to be big outliers. 
 ```
 
 Top 5 Dates: 

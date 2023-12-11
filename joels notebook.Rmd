@@ -34,10 +34,26 @@ wh_visitor_data <- wh_visitor_data |>
   mutate(as_datetime(mdy_hm(appt_end_date)))
 
 wh_visitor_data |> 
-  mutate(date = as_date(as_datetime(mdy_hm(appt_end_date)))) |> 
-  filter(str_detect(date, "2023-07-02")) |> 
-  group_by(date) |> 
+  filter(str_detect(appt_end_date, "2023-07-02")) |> 
+  group_by(appt_end_date) |> 
   summarize(sum= sum(total_people))
+
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-02")) |> 
+  mutate(wday(appt_end_date))
+# ok so we just found out in a way too complex way that July 2 was a Monday. Now let's run this code again to see what the average number of visitors on a monday is.
+
+wh_visitor_data |> 
+  mutate(day_of_week = wday(appt_end_date)) |> 
+  filter(day_of_week == 1) |> 
+  group_by(appt_end_date) |> 
+  summarize(count = n()) |> 
+  summarize(mean(count))
+
+# ok so the mean is 299.627 entries per day. but i realize that won't work because each row says how many people visited on that one day and that number was not just 1. let's try about it again
+wh_visitor_data |> 
+  
+
 ```
 So 324 people visited the white house on cocaine day.
 
@@ -124,6 +140,10 @@ wh_visitor_data %>%
 462349/847371
 ```
 
+```{sql connection=}
+SELECT *
+FROM clean_wh_visitor_data
+```
 
 
 How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
