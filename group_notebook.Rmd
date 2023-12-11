@@ -19,13 +19,14 @@ library(lubridate)
 
 ```{r}
 ###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
-wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") |> clean_names() |>
-  mutate(toa = mdy_hm(toa)) |>
-  mutate(tod = mdy_hm(tod)) |>
-  mutate(appt_made_date = mdy_hm(appt_made_date))  |>
+wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") 
+wh_visitor_data |> 
+  mutate(toa = ymd_hms(toa)) |>
+  mutate(tod = ymd_hms(tod)) |>
+  mutate(appt_made_date = ymd_hms(appt_made_date))  |>
   mutate(appt_start_date = mdy(appt_start_date))  |>
-  mutate(appt_end_date = mdy_hm(appt_end_date))  |>
-  mutate(lastentrydate = mdy_hm(lastentrydate))  |>
+  mutate(appt_end_date = ymd_hms(appt_end_date))  |>
+  mutate(lastentrydate = ymd_hms(lastentrydate))  |>
   mutate(releasedate = mdy(releasedate)) 
   
 ```
@@ -41,14 +42,6 @@ Here are our new questions we'd like to answer: What are the most popular times 
 Immediate limitations: 1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us. 2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that. 3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations. 5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here. 6. I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
 
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
-
-```{r}
-###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
-
-wh_visitor_data <- wh_visitor_data |>
-  mutate(toa_date = ymd_hms(toa) |> date()) |>
-  mutate(tod_date = ymd_hms(tod) |>date())
-```
 
 ```{r}
 ####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
@@ -112,7 +105,7 @@ wh_visitors_by_end_date <- wh_visitor_data |>
 # July 2 calculation
 wh_visitor_data |> 
   filter(str_detect(appt_end_date, "2023-07-02")) |> 
-  group_by(date) |> 
+  group_by(appt_end_date) |> 
   summarize(sum= sum(total_people)) 
 # so 1994 people visited the white house on that date. let's check what the average amount of people on mondy is.
 wh_visitor_data |> 
