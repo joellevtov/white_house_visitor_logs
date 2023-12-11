@@ -107,7 +107,7 @@ wh_visitor_data |>
   filter(str_detect(appt_end_date, "2023-07-02")) |> 
   group_by(appt_end_date) |> 
   summarize(sum= sum(total_people)) 
-# so 1994 people visited the white house on that date. let's check what the average amount of people on mondy is.
+# so 1994 people visited the white house on that date. let's check what the average amount of people on monday is.
 wh_visitor_data |> 
   mutate(day_of_week = wday(appt_end_date)) |> 
   filter(day_of_week == 1) |> 
