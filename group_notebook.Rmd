@@ -79,7 +79,10 @@ wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
   summarise(count = n())
 ```
 
-Question 1.  What are the most popular months and dates? What political events correlate with those? 
+Question 1.  What are the most popular months and dates? What political events correlate with those?
+
+WHERE WE ARE AT RIGHT NOW: 
+Need to do some digging into the names that appear on these dates per Derek’s feedback. I think we should look at the dates when Menna filtered for groups smaller than 100. I think it would be worth looking at either the top 10 or looking at top dates filtering for groups smaller than 500 or something to se how it varies. We should def look at the data for the mysterious 3/18/23 date.
 
 ```{r}
 
@@ -145,6 +148,8 @@ This is so interesting because, aside from 12/23, none of the dates repeat in th
 Note from Taylor - Can we look at the data for 3/18/23 to see who visited? Maybe it had something to do with St. Patrick's Day? Biden is Irish Catholic. Not sure if people actually do anything for that though.
 
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
+
+ANSWER:It does not correlate with approval rating. We are basically done with this question but I still need to write up a little answer describing the data.
 
 ```{r}
 ### Note - asked ChatGPT how to make the month column have labels and gave it my mutate code creating a new col with lubridate
@@ -238,6 +243,9 @@ Yup, looks like there is not really a significant relationship between visits to
 
 3.  West Wing Tours are selective, how many are being taken?
 
+WHERE WE ARE AT RIGHT NOW:
+Shaun are you working on this one? There’s nothing in the group notebook for this but we do have the analysis done looking at the data for the cocaine day. Might be good to look at the # of ppl who did west wing tours that day specifically and the mean / median # of ppl who visit for west wing tours normally.
+
 ```{r}
 
 ```
@@ -265,7 +273,8 @@ wh_visitors_per_day <- wh_visitor_data |>
   summarize(total_people = sum(total_people)) |> 
   filter(!is.na(total_people)) 
 
-#answer - 33801 is the average number of visitors via the mean but that's thrown off by a couple days with an insanely high number of visitors. the median is more reasonable, 139. 	
+#answer - 33,801 is the average number of visitors via the mean but that's thrown off by a couple days with an insanely high number of visitors. the median is more reasonable, 139.
+
 # funny. let's make a scatterplot with a line of best fit to see what the distribution is. perhaps the number of visitors has increased as time as went on?
 # without the function (thanks bard) ggplot was displaying like 2e19 which if i really think hard i can decipher but i am lazy so i made it display in a reasonable format
 format_numbers <- function(x) format(x, big.mark = ",", trim = 0)
@@ -348,6 +357,10 @@ wh_repeats %>%
 
 
 4.  Who has sponsored the most White House visitors?
+
+WHERE WE ARE AT: 
+Mostly done with this. We should do some digging into the top ppl though. I can tackle this one - need to fix Kamala Harris with case_when
+
 This won't load properly because we have to upload the file and I missed a potus column when I was cleaning, but after office visitors, it's Biden, then Ed Teleky (17k visitors) and then Gionelly Mills (almost 13k visits).
 ```{r}
 open_refine_cleaned_visitors <- read_csv("data/open_refined_wh_data_combined.csv")
@@ -358,6 +371,9 @@ open_refine_cleaned_visitors |> group_by(VISITEE_NAMELAST_CLEAN, VISITEE_NAMEFIR
 ```
 
 5.  What percent of visitors have just been labeled "office visitors"?
+
+WHERE WE ARE AT:
+Done. Not that interesting but we need to do a little write up for it maybe we can make it sound more interesting highlight how this label is fucking up the data
 
 ```{r}
 wh_visitor_data %>%
@@ -370,6 +386,9 @@ wh_visitor_data %>%
 ```
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
+
+WHERE WE ARE AT: 
+Derek had some feedback about looking into more AI ppl / foreign ambassadors. Shaun I think you were working on this? We should tag team this probably - you want to take AI folks and someone else can look into foreign ambassadors or something?
 
 Let's see if we can find whether OpenAI lobbyists visited the president. According to Politico, there are the handful of lobbyists the company has:- Tony Samp- Chan ParkThe Politico story says that those two only started as OpenAI lobbyists in October so that doesn't help us.Let's try looking for the CEO, Samuel H Altman.
 
