@@ -21,16 +21,10 @@ options(scipen=999)
 
 ```{r}
 ###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
-wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") 
-wh_visitor_data |> 
-  clean_names() |> 
-  mutate(toa = ymd_hms(toa)) |>
-  mutate(tod = ymd_hms(tod)) |>
-  mutate(appt_made_date = ymd_hms(appt_made_date))  |>
-  mutate(appt_start_date = mdy(appt_start_date))  |>
-  mutate(appt_end_date = ymd_hms(appt_end_date))  |>
-  mutate(lastentrydate = ymd_hms(lastentrydate))  |>
-  mutate(releasedate = mdy(releasedate)) 
+wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") |> 
+  clean_names()
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(appt_end_date = mdy_hm(appt_end_date))
   
 ```
 
@@ -50,7 +44,7 @@ Let's see when the most popular day for visiting was. To do that, first we're go
 ####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
 wh_visitor_data |>
-  group_by(toa_date) |> 
+  group_by(toa) |> 
   summarize(count=n()) |>
   arrange(desc(count))
   
@@ -364,9 +358,8 @@ Mostly done with this. We should do some digging into the top ppl though. I can 
 
 This won't load properly because we have to upload the file and I missed a potus column when I was cleaning, but after office visitors, it's Biden, then Ed Teleky (17k visitors) and then Gionelly Mills (almost 13k visits).
 ```{r}
-open_refine_cleaned_visitors <- read_csv("data/open_refined_wh_data_combined.csv")
-
-open_refine_cleaned_visitors |> group_by(VISITEE_NAMELAST_CLEAN, VISITEE_NAMEFIRST_CLEAN) |>
+wh_visitor_data |> 
+  group_by(visitee_namefirst_clean, visitee_namelast_clean) |>
   summarise(visits = n()) |>
   arrange(desc(visits))
 ```
