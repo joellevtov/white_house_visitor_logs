@@ -15,6 +15,7 @@ Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW
 library(tidyverse)
 library(janitor)
 library(lubridate)
+library(ggplot2) #make sure you have ggplot 2 installed, not ggplot
 options(scipen=999)
 ```
 
@@ -128,24 +129,79 @@ wh_visitors_per_day <- wh_visitor_data |>
 # without the function (thanks bard) ggplot was displaying like 2e19 which if i really think hard i can decipher but i am lazy so i made it display in a reasonable format
 format_numbers <- function(x) format(x, big.mark = ",", trim = 0)
 
-scatter_visitors_day <- ggplot(data=wh_visitors_per_day) +
+scatter_visitors_day <- 
+  ggplot(data=wh_visitors_per_day) +
   geom_point(aes(x=date, y=total_people))
 
 scatter_visitors_day <- scatter_visitors_day + scale_y_continuous(labels = format_numbers)
 
-# It looks like the answer is not really. The days with tens of thousands of people seem to be big outliers, something is screwy with the white house's data - on 12/01/2022, for example, several groups of 5,619 people allegedly toured the white house to visit kevin ballen. i looked him up and it looks like he's a really annoying (at least from his looks) literally-just-graduated Harvard batchelor's alum. 
+# It looks like the answer is not really. The days with tens of thousands of people seem to be big outliers, something is screwy with the white house's data
+wh_visitors_per_day |> 
+  arrange(desc(total_people))
+# on 12/01/2022, for example, several groups of 5,619 people allegedly toured the white house to visit kevin ballen. i looked him up and it looks like he's a really annoying (at least from his looks) literally-just-graduated Harvard alum who completed a batchelor's. 
 # edit: the more i read about him the more i am convinced he is an annoying person. from a crimson puff piece:
 # Kevin Ballen didn’t plan on taking two gap years. But he did intend to live a life less constrained by society’s expectations. [...] But a single moment made him rethink his altruistic efforts. It happened outside a local supermarket at a fundraiser for a day care that served homeless children. At the last minute, student leaders were unable to attend and Ballen was put in charge. “It was a realization of agency and what was possible for a young person like me,” he said. “I was able to lead a team, to make tangible change, to use my creativity.” 
 # sounds like someone owed this kid's parent a favor. cHrist. 
 # edit #2: it gets worse the more i look. this kid's thesis topic - i shit you not - that got featured on the harvard tiktok was literally "young people don't love taxes as much as he does." 
 
-# i decided to take a look at what the actual hell is happening on one of the days with a gigantic number of people, Dec. 1 2022. Macron visited the White House on that day.
+# i decided to take a look at what the actual hell is happening on one of the days with a gigantic number of people. first, Dec. 1 2022. Macron visited the White House on that day.
 wh_visitor_data |> 
      filter(str_detect(appt_end_date, "2022-12-01")) |> 
      select(total_people, namelast, namefirst, visitee_namelast, visitee_namefirst) |> 
      arrange(desc(total_people))
 
-# What's really strange is that 5619 people are visiting him over and over. I think he's either running a covert drug operation, an illicit prostitution ring (maybe Pizzagate wasn't that far off after all??), or this is a weird data keeping error.
+# What's really strange is that 5619 people are visiting him over and over. And they're not vising Joe Biden. I think he's either running a covert drug operation, an illicit prostitution ring (maybe Pizzagate wasn't that far off after all??), or this is a weird data keeping error. Let's see if it continues with the other days.
+
+wh_visitor_data |> 
+     filter(str_detect(appt_end_date, "2022-09-13")) |> 
+     select(total_people, namelast, namefirst, visitee_namelast, visitee_namefirst) |> 
+     arrange(desc(total_people))
+
+# So on this day, which is the day with the second most people visiting the white house, we see the weird repetition of the number of people visiting again, 4478 this time visiting Biden. Let's look at July 4, 2022. A large amount of people would make sense on that day.
+
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# So this time the magic number is 1182. They're all (allegedly) visiting Bonnie Casillas, the associate director for White House operations. Let's see if there are any rows with a reasonable amount of people visiting.
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  filter(total_people != 1182) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# Uhh. Now we have 788 people visiting Biden over and over again. Also strange. Let's see what happens when we filter out both 1182 and 788 
+
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+    filter(total_people != 1182 & total_people != 788) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# Now 752 is the number du jour. Jesus christ.
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  filter(total_people != 1182 & total_people != 788 & total_people !=752) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# This is really weird. 
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  unique(total_people) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+wh_repeats <- table(wh_visitor_data$total_people)
+wh_repeats <- as.data.frame(wh_repeats)
+
+wh_repeats %>%
+  ggplot(aes(x = Freq)) +
+  geom_histogram(breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000)) 
+
+
+# So we know that usually, 
 ```
 
 Top 5 Dates: 
