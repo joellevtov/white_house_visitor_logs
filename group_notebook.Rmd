@@ -219,6 +219,22 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
 
 #note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months? Also it wouldn't graph Dec 2022 which was the second highest month because of NA values in the approval ratings. @DEREK is there a way around this?
 ```
+Derek's feedback:
+Doesn't seem like there's any correlation there, but if you wanted to find out you could calculate a correlation coefficient or do a t-test (https://thescoop.org/data_journalism_book/basicstats.html)
+
+Ok - let's calculate the correlation coefficient to see if these are related. I think we should just look at data from 2022 and 2023 because the 2021 data is not very robust.
+
+```{r}
+#let's take out 2021 data
+month_ratings_post_covid <- visits_by_month_ratings |> filter (date > "2021-12-31")
+
+#now let's run the correlation test
+month_ratings_post_covid |>
+  select(-year, -month, -date) |>
+  correlate()
+```
+
+Yup, looks like there is not really a significant relationship between visits to the White House and Biden's approval ratings for any party. 
 
 3.  West Wing Tours are selective, how many are being taken?
 

@@ -13,6 +13,7 @@ output: html_notebook
 library(tidyverse)
 library(janitor)
 library(lubridate)
+library(corrr)
 ```
 
 
@@ -57,7 +58,7 @@ wh_visitor_data |>
   arrange(desc(total_visits))
 
 ### just kidding, there are a ton of NA dates still. maybe appt end date?
-wh_visitor_data |>
+wh_visitors_by_end_date <- wh_visitor_data |>
   group_by(appt_end_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
@@ -67,11 +68,6 @@ wh_visitor_data |>
 
 1. What are the most popular months and dates? What political events correlate with those?
 Top five dates are June 22 2023, Dec. 23 2022, April 26 2023, July 4 2023, and Dec. 13 2023.
-
-```{r}
-
-
-```
 
 2. Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
@@ -189,6 +185,23 @@ ggplot(visits_by_month_ratings, aes(x = date)) +
 
 #note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months?
 ```
+
+Derek's feedback:
+Doesn't seem like there's any correlation there, but if you wanted to find out you could calculate a correlation coefficient or do a t-test (https://thescoop.org/data_journalism_book/basicstats.html)
+
+Ok - let's calculate the correlation coefficient to see if these are related. I think we should just look at data from 2022 and 2023 because the 2021 data is not very robust.
+
+```{r}
+#let's take out 2021 data
+month_ratings_post_covid <- visits_by_month_ratings |> filter (date > "2021-12-31")
+
+#now let's run the correlation test
+month_ratings_post_covid |>
+  select(-year, -month, -date) |>
+  correlate()
+```
+
+Yup, looks like there is not really a significant relationship between visits to the White House and Biden's approval ratings for any party. 
 
 4. Who has sponsored the most White House visitors?
 
