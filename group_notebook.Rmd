@@ -23,6 +23,7 @@ options(scipen=999)
 ###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
 wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") 
 wh_visitor_data |> 
+  clean_names() |> 
   mutate(toa = ymd_hms(toa)) |>
   mutate(tod = ymd_hms(tod)) |>
   mutate(appt_made_date = ymd_hms(appt_made_date))  |>
