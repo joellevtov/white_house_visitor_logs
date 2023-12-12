@@ -13,10 +13,12 @@ Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW
 
 ```{r}
 library(tidyverse)
+library(tools)
 library(janitor)
 library(lubridate)
 library(ggplot2) #make sure you have ggplot 2 installed, not ggplot
 options(scipen=999)
+
 ```
 
 ```{r}
@@ -352,17 +354,63 @@ wh_repeats %>%
 
 
 4.  Who has sponsored the most White House visitors?
+Here are the top 10 most popular people to visit in the White House:
+
+Visitors Office - 462398	- I think this is actually meant to be Office Visitors. More on this later.
+Joe	Biden	77197	- Not shocking.
+Ed	Teleky	17354	- Air Force Chief Master Sgt. Edward Teleky, Air Force Band's drum major - why is he getting so many visits?
+Gionelly	Mills	12383		- Staff Assistant for the White House Visitors Office
+Lydia	Hecmanczuk	6956	- IT Specialist at Executive Office of the President
+Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President
+Dan	Via	5841		
+Kevin	Ballen	4903		
+Peyton	Schwartz	4533		
+Kamala	Harris	4319 - Vice President
 
 WHERE WE ARE AT: 
 Mostly done with this. We should do some digging into the top ppl though. I can tackle this one - need to fix Kamala Harris with case_when
 
 This won't load properly because we have to upload the file and I missed a potus column when I was cleaning, but after office visitors, it's Biden, then Ed Teleky (17k visitors) and then Gionelly Mills (almost 13k visits).
+
 ```{r}
 wh_visitor_data |> 
   group_by(visitee_namefirst_clean, visitee_namelast_clean) |>
   summarise(visits = n()) |>
   arrange(desc(visits))
 ```
+Let's clean our data a little bit better. 
+
+```{r}
+#used chatgpt to do this it took forever. It kept giving me code to change the last name from potus to Biden but tolower(visitee_namelast_clean) %in% c("potus") ~ "Joe" would not work. I asked it: can you help me write a case when for the following conditions: if visitee_namelast_clean == Potus or potus or POTUS,  change visitee_namelast_clean to Biden and visitee_namefirst_clean to Joe. 
+
+#It gave me the following code but with tolower(visitee_namelast_clean) %in% c("potus") ~ "Joe" - i finally figured out it was because I had already changed the visitee_namelast_clean column in the code above so it wouldn't recognize "potus" in the visitee_namelast_clean col to change the first name to Joe. 
+
+wh_visitor_data <- wh_visitor_data |>
+  mutate(
+    visitee_namelast_clean = case_when(
+      tolower(visitee_namelast_clean) %in% c("potus") ~ "Biden",
+      tolower(visitee_namelast_clean) %in% c("vpotus") ~ "Harris",
+      tolower(visitee_namelast_clean) %in% c("flotus") ~ "Biden",
+      TRUE ~ visitee_namelast_clean
+    ),
+    visitee_namefirst_clean = case_when(
+      tolower(visitee_namelast) %in% c("potus") ~ "Joe",
+      tolower(visitee_namelast) %in% c("vpotus") ~ "Kamala",
+      tolower(visitee_namelast) %in% c("flotus") ~ "Jill",
+      TRUE ~ visitee_namefirst_clean
+    )
+  )
+```
+
+
+```{r}
+#now let's run that data again
+wh_visitor_data |> 
+  group_by(visitee_namefirst_clean, visitee_namelast_clean) |>
+  summarise(visits = n()) |>
+  arrange(desc(visits))
+```
+
 
 5.  What percent of visitors have just been labeled "office visitors"?
 

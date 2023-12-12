@@ -19,7 +19,7 @@ library(corrr)
 
 ```{r}
 
-wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
+wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") |> clean_names() |>
   mutate(toa = mdy_hm(toa)) |>
   mutate(tod = mdy_hm(tod)) |>
   mutate(appt_made_date = mdy_hm(appt_made_date))  |>
@@ -207,7 +207,7 @@ Yup, looks like there is not really a significant relationship between visits to
 
 ```{r}
 ### need to clean data in open refine :)
-open_refine_cleaned_visitors <- read_csv("data/open_refined_wh_data_combined.csv")
+open_refine_cleaned_visitors <- read_csv("data/cleaned_OPENREFINE.csv")
 ```
 
 ```{r}
