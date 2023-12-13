@@ -98,14 +98,12 @@ Now that we know what columns we need, let's finish cleaning our data.
 
 ```{r}
 wh_visitor_data <- wh_visitor_data |>
-  select(-uin, -bdgnbr, -access_type, -appt_cancel_date, -last_updatedby, -post, -lastentrydate, -terminal_suffix, -caller_name_last, -caller_name_first, -caller_room, -column, -column2)
+  select(-uin, -bdgnbr, -access_type, -appt_cancel_date, -last_updatedby, -post, -lastentrydate, -terminal_suffix, -caller_name_last, -caller_name_first, -caller_room, -column, -column2, -tod, -pod)
 ```
 
 Question 1.  What are the most popular months and dates? What political events correlate with those?
 
 WHERE WE ARE AT RIGHT NOW: 
-Menna, can you run this code again and see if you get the same results? I realized our appt end date column had some things listed as 1/1/2021 11:59:00 and some as 23:59:00. I think we should get the same answers but want to make sure it's uniform. I wrote some code in the chunk below to clean that column so it's just date no time.
-
 Need to do some digging into the names that appear on these dates per Derek’s feedback. I think we should look at the dates when Menna filtered for groups smaller than 100. I think it would be worth looking at either the top 10 or looking at top dates filtering for groups smaller than 500 or something to se how it varies. We should def look at the data for the mysterious 3/18/23 date.
 
 
@@ -133,6 +131,8 @@ wh_visitors_by_end_date <- wh_visitor_data |>
   arrange(desc(total_visits))
 
 #That looks better. Let's use appt end date because it seems to be the date col with the most data and fewest NAs.
+
+wh_visitors_by_end_date
 ```
 
 Top 5 Dates: 
@@ -157,7 +157,7 @@ wh_visitor_data |>
   arrange(desc(count))
 ```
 
-Top 5 Dates: 
+Top 5 Dates with groups smaller than 100: 
 
 1. 12-23-2022: President Biden passes a successful bipartisan funding bill
 2. 03-18-2023: literally NO idea nothing is showing up (pls help)
@@ -169,9 +169,9 @@ This is so interesting because, aside from 12/23, none of the dates repeat in th
 
 Note from Taylor - Can we look at the data for 3/18/23 to see who visited? Maybe it had something to do with St. Patrick's Day? Biden is Irish Catholic. Not sure if people actually do anything for that though.
 
-2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
+2. Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
-ANSWER: Visits in 2021 were super minimal. In 2022, visits were fairly 
+ANSWER: Visits in 2021 were super minimal. In 2022, visits were fairly sparse in the first half of the year, but ramped up in July and the following months. In 2023 there were far more visits to the White House - could be from a full post-pandemic "return to normal" or could be due to things gearing up ahead of election season? Similar to 2022, there was a jump in visits in summer months. However, this year June was the top month, because of PM Modi's visit. There's no correlation between visits and approval ratings.
 
 ```{r}
 ### Note - asked ChatGPT how to make the month column have labels and gave it my mutate code creating a new col with lubridate
@@ -189,7 +189,7 @@ approval_ratings <- approval_ratings |>
 
 #making a df with top months for visitors
 wh_visitor_by_month <- wh_visitors_by_end_date |> 
- mutate(date_time = ymd_hms(appt_end_date),
+ mutate(date_time = ymd(appt_end_date),
   month = month.abb[month(appt_end_date)])
 
 wh_visitor_by_month <- wh_visitor_by_month |>
@@ -198,14 +198,13 @@ wh_visitor_by_month <- wh_visitor_by_month |>
 
 #last one not really helpful bc didn't sort by year. Now doing the same with year and month
 wh_visitors_month_year <- wh_visitors_by_end_date |> 
- mutate(date_time = ymd_hms(appt_end_date),
+ mutate(date_time = ymd(appt_end_date),
   month = month.abb[month(appt_end_date)],
   year = year(date_time))
 
 top_months_by_year <- wh_visitors_month_year |>
   group_by(year, month) |>
    summarise(total_visits = sum(total_visits))
-
 ```
 
 
@@ -255,21 +254,22 @@ Ok - let's calculate the correlation coefficient to see if these are related. I 
 
 ```{r}
 #let's take out 2021 data
-month_ratings_post_covid <- visits_by_month_ratings |> filter (date > "2021-12-31")
+top_months_by_year <- visits_by_month_ratings |> filter (date > "2021-12-31")
 
 #now let's run the correlation test
 month_ratings_post_covid |>
   select(-year, -month, -date) |>
   correlate()
+
 ```
 
 Yup, looks like there is not really a significant relationship between visits to the White House and Biden's approval ratings for any party. 
 
-Let's just look at how things have changed month by month in 2022 or 2023. 
+Let's just look at how things have changed month by month.
 
 ```{r}
 library(ggplot2)
-ggplot(month_ratings_post_covid, aes(x = date)) +
+ggplot(top_months_by_year, aes(x = date)) +
   # Bar chart for total_visits
   geom_bar(aes(y = total_visits), stat = "identity", fill = "darkgray") +
   theme_gray()
@@ -384,8 +384,6 @@ wh_repeats %>%
   ggplot(aes(x = Freq)) +
   geom_histogram(breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000)) 
 
-
-# So we know that usually, 
 ```
 
 
@@ -395,18 +393,17 @@ Here are the top 10 most popular people to visit in the White House:
 Visitors Office - 462398	- I think this is actually meant to be Office Visitors. More on this later.
 Joe	Biden	77197	- Not shocking.
 Ed	Teleky	17354	- Air Force Chief Master Sgt. Edward Teleky, Air Force Band's drum major - why is he getting so many visits?
-Gionelly	Mills	12383		- Staff Assistant for the White House Visitors Office
-Lydia	Hecmanczuk	6956	- IT Specialist at Executive Office of the President
-Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President
-Dan	Via	5841		
-Kevin	Ballen	4903		
-Peyton	Schwartz	4533		
+Gionelly	Mills	12383		- Staff Assistant for the White House Visitors Office - assuming this is people going to secure some kind of visitor status/fill out paperwork etc.
+Lydia	Hecmanczuk	6956	- IT Specialist at Executive Office of the President - she probably handles when they have security IT specialists?
+Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President - would be interested to see who is visiting her and why
+Dan	Via	5841 - Not sure if I found the right person but I think he's Deputy Director, Ceremonies and Protocol for the Air Force - also seems kind of weird but maybe handling events? Worth looking into further
+Kevin	Ballen	4903 - Advisor to Director of National Economic Council, previously Staff Assistant for Operations
+Could be worth looking into
+Peyton	Schwartz 4533 - Special Assistant to the Social Secretary & Deputy Director of Arrangements
+Could be worth looking into
 Kamala	Harris	4319 - Vice President
+Really surprised she gets so few visits?
 
-WHERE WE ARE AT: 
-Mostly done with this. We should do some digging into the top ppl though. I can tackle this one - need to fix Kamala Harris with case_when
-
-This won't load properly because we have to upload the file and I missed a potus column when I was cleaning, but after office visitors, it's Biden, then Ed Teleky (17k visitors) and then Gionelly Mills (almost 13k visits).
 
 ```{r}
 wh_visitor_data |> 
