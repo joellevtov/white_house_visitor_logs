@@ -146,7 +146,7 @@ Note from Taylor - Can we look at the data for 3/18/23 to see who visited? Maybe
 
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
-ANSWER:It does not correlate with approval rating. We are basically done with this question but I still need to write up a little answer describing the data.
+ANSWER: Visits in 2021 were super minimal. In 2022, visits were fairly 
 
 ```{r}
 ### Note - asked ChatGPT how to make the month column have labels and gave it my mutate code creating a new col with lubridate
@@ -182,6 +182,8 @@ top_months_by_year <- wh_visitors_month_year |>
    summarise(total_visits = sum(total_visits))
 
 ```
+
+
 
 ```{r}
 #not sure if that was useful. I think I need to join these dataframes. Asked chatgpt for help with this because I needed to join on the date column and didn't have one with year and month in it for top_months_by_year. Asked it: I want to create a date column that looks like this: 2022 Jan, 2022 Feb, 2022 March. Currently I have a year column that looks like this: 2022, 2022, 2022, and a month column that looks like this: Jan, Feb, March. How can I create this new column using r and the tidyverse?
@@ -237,6 +239,16 @@ month_ratings_post_covid |>
 ```
 
 Yup, looks like there is not really a significant relationship between visits to the White House and Biden's approval ratings for any party. 
+
+Let's just look at how things have changed month by month in 2022 or 2023. 
+
+```{r}
+library(ggplot2)
+ggplot(month_ratings_post_covid, aes(x = date)) +
+  # Bar chart for total_visits
+  geom_bar(aes(y = total_visits), stat = "identity", fill = "darkgray") +
+  theme_gray()
+```
 
 3.  West Wing Tours are selective, how many are being taken?
 
@@ -350,7 +362,6 @@ wh_repeats %>%
 
 # So we know that usually, 
 ```
-
 
 
 4.  Who has sponsored the most White House visitors?

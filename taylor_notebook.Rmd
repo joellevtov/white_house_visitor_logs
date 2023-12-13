@@ -211,7 +211,7 @@ open_refine_cleaned_visitors <- read_csv("data/cleaned_OPENREFINE.csv")
 ```
 
 ```{r}
-open_refine_cleaned_visitors |> group_by(VISITEE_NAMELAST_CLEAN, VISITEE_NAMEFIRST_CLEAN) |>
+open_refine_cleaned_visitors |> group_by(visitee_namelast_clean, visitee_namefirst_clean) |>
   summarise(visits = n()) |>
   arrange(desc(visits))
 ```
