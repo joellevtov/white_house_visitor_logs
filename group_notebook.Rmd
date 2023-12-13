@@ -392,15 +392,23 @@ Here are the top 10 most popular people to visit in the White House:
 
 Visitors Office - 462398	- I think this is actually meant to be Office Visitors. More on this later.
 Joe	Biden	77197	- Not shocking.
-Ed	Teleky	17354	- Air Force Chief Master Sgt. Edward Teleky, Air Force Band's drum major - why is he getting so many visits?
-Gionelly	Mills	12383		- Staff Assistant for the White House Visitors Office - assuming this is people going to secure some kind of visitor status/fill out paperwork etc.
-Lydia	Hecmanczuk	6956	- IT Specialist at Executive Office of the President - she probably handles when they have security IT specialists?
-Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President - would be interested to see who is visiting her and why
-Dan	Via	5841 - Not sure if I found the right person but I think he's Deputy Director, Ceremonies and Protocol for the Air Force - also seems kind of weird but maybe handling events? Worth looking into further
+
+Ed	Teleky	17354	- Air Force Chief Master Sgt. Edward Teleky, Air Force Band's drum major - why is he getting so many visits? He has a lot of people visiting him over and over - between 30 and 50 times.
+
+Gionelly	Mills	12383		- Staff Assistant for the White House Visitors Office - assuming this is people going to secure some kind of visitor status/fill out paperwork etc. This checks out, the most any single person visited her was three times. They're probably stopping in at her office to get some type of credentials.
+
+Lydia	Hecmanczuk	6956	- IT Specialist at Executive Office of the President - she probably handles when they have security IT specialists? Similar to Gionelly Mills, she has a lot of people visit her once or twice. I wonder if she has to do something to people's devices to facilitate some kind of work being done there?
+
+Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President - would be interested to see who is visiting her and why. Her top visitors are (I believe) a DC real estate agent, a florist, an NYC pianist, I think it's mostly people related to event planning. Some I couldn't pinpoint on Google though.
+
+Dan	Via	5841 - Not sure if I found the right person but I think he's Deputy Director, Ceremonies and Protocol for the Air Force - also seems kind of weird but maybe handling events? Worth looking into further. Looks like he's getting a lot of visits from a violinist for the marines, another music person in the marines band and the CEO of a screen printing company in the area. Doesn't seem super interesting.
+
 Kevin	Ballen	4903 - Advisor to Director of National Economic Council, previously Staff Assistant for Operations
 Could be worth looking into
+
 Peyton	Schwartz 4533 - Special Assistant to the Social Secretary & Deputy Director of Arrangements
 Could be worth looking into
+
 Kamala	Harris	4319 - Vice President
 Really surprised she gets so few visits?
 
@@ -442,6 +450,32 @@ wh_visitor_data |>
   group_by(visitee_namefirst_clean, visitee_namelast_clean) |>
   summarise(visits = n()) |>
   arrange(desc(visits))
+```
+```{r}
+wh_visitor_data |> 
+ filter(visitee_namelast_clean == "Mills" & visitee_namefirst_clean == "Gionelly") |>
+  group_by(namelast, namefirst, namemid) |>
+  summarise(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+wh_visitor_data |> 
+ filter(visitee_namelast_clean == "Hecmanczuk" & visitee_namefirst_clean == "Lydia") |>
+  group_by(namelast, namefirst, namemid) |>
+  summarise(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+wh_visitor_data |> 
+ filter(visitee_namelast_clean == "Trocola" & visitee_namefirst_clean == "Amanda") |>
+  group_by(namelast, namefirst, namemid) |>
+  summarise(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+wh_visitor_data |> 
+ filter(visitee_namelast_clean == "Via" & visitee_namefirst_clean == "Dan") |>
+  group_by(namelast, namefirst, namemid) |>
+  summarise(total_visits = n()) |>
+  arrange(desc(total_visits))
+
 ```
 
 
