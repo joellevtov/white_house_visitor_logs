@@ -9,22 +9,24 @@ authors: Taylor, Menna, Shaun, Joel
 output: html_notebook
 ---
 
+Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW1s5KP2PIQM/edit?usp=sharing 
+
 ```{r}
 library(tidyverse)
+library(tools)
 library(janitor)
 library(lubridate)
+library(ggplot2) #make sure you have ggplot 2 installed, not ggplot
+options(scipen=999)
+
 ```
 
 ```{r}
 ###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
-wh_visitor_data <- read_csv("data/combined.csv") |> clean_names() |>
-  mutate(toa = mdy_hm(toa)) |>
-  mutate(tod = mdy_hm(tod)) |>
-  mutate(appt_made_date = mdy_hm(appt_made_date))  |>
-  mutate(appt_start_date = mdy(appt_start_date))  |>
-  mutate(appt_end_date = mdy_hm(appt_end_date))  |>
-  mutate(lastentrydate = mdy_hm(lastentrydate))  |>
-  mutate(releasedate = mdy(releasedate)) 
+wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") |> 
+  clean_names()
+wh_visitor_data <- wh_visitor_data |> 
+  mutate(appt_end_date = mdy_hm(appt_end_date))
   
 ```
 
@@ -38,43 +40,26 @@ Here are our new questions we'd like to answer: What are the most popular times 
 
 Immediate limitations: 1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us. 2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that. 3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations. 5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here. 6. I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
 
-```{r}
-# We want a clean single dataframe to work with. Right now there are a lot of columns that might not be particularly interesting or useful. For example, let's get rid of x28 and x29, caller room, appt cancel date, terminal suffix, poa, tod, pod,  meeting room, and post.
-
-clean_wh_visitor_data <- wh_visitor_data |>
-  select(-poa, -access_type, -pod, -appt_cancel_date, -caller_room, -x28, -x29, -uin, -bdgnbr, -last_updatedby, -post, -terminal_suffix,-caller_name_last, -caller_name_first)
-
-# Full transparency, I couldn't remember the code for deleting a column so I asked ChatGPT the following: "using the tidyverse, janitor, and lubridate libraries in R, how do I delete a column?"
-```
-
 Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
-
-```{r}
-###note - we were having problems with this so I asked chatgpt: how do I make a new column with just the date from a column that includes date and time using lubridate and the tidyverse? it told me to do mutate(toa_date = ymd_hms(toa) %>% date())
-
-clean_wh_visitor_data <- clean_wh_visitor_data |>
-  mutate(toa_date = ymd_hms(toa) |> date()) |>
-  mutate(tod_date = ymd_hms(tod) |>date())
-```
 
 ```{r}
 ####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
-clean_wh_visitor_data |>
-  group_by(toa_date) |> 
+wh_visitor_data |>
+  group_by(toa) |> 
   summarize(count=n()) |>
   arrange(desc(count))
   
 # note - since there are so many NA dates here, I think we should group by appt date.
 
-wh_visitors_by_date <- clean_wh_visitor_data |>
+wh_visitors_by_date <- wh_visitor_data |>
   group_by(appt_start_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
 ### just kidding, there are a ton of NA dates still. maybe appt end date?
 
-wh_visitors_by_end_date <- clean_wh_visitor_data |>
+wh_visitors_by_end_date <- wh_visitor_data |>
   group_by(appt_end_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
@@ -82,48 +67,47 @@ wh_visitors_by_end_date <- clean_wh_visitor_data |>
 ### this seems better
 ```
 
-```{r}
-clean_wh_visitor_data |> filter(appt_end_date == 2023-07-26) |>
-  group_by(meeting_room) |>
-  summarise(count = n()) |>
-  arrange(desc(count))
-```
 
 ```{r}
 ###derek asked if the NA dates were specific to certain offices. how do we figure that out?
 
-clean_wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
+wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
   group_by(meeting_loc) |>
   summarise(count = n())
-
 ```
 
-1.  What are the most popular months and dates? What political events correlate with those? 
+Question 1.  What are the most popular months and dates? What political events correlate with those?
+
+WHERE WE ARE AT RIGHT NOW: 
+Need to do some digging into the names that appear on these dates per Derek’s feedback. I think we should look at the dates when Menna filtered for groups smaller than 100. I think it would be worth looking at either the top 10 or looking at top dates filtering for groups smaller than 500 or something to se how it varies. We should def look at the data for the mysterious 3/18/23 date.
 
 ```{r}
 
 ###mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
-clean_wh_visitor_data |>
+wh_visitor_data |>
   group_by(toa_date) |> 
   summarize(count=n()) |>
   arrange(desc(count))
   
 # note - since there are so many NA dates here, I think we should group by appt date.
 
-wh_visitors_by_date <- clean_wh_visitor_data |>
+wh_visitors_by_date <- wh_visitor_data |>
   group_by(appt_start_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
 ### just kidding, there are a ton of NA dates still. maybe appt end date?
 
-wh_visitors_by_end_date <- clean_wh_visitor_data |>
+wh_visitors_by_end_date <- wh_visitor_data |>
   group_by(appt_end_date) |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
-### this seems better
+#That looks better. Let's use appt end date because it seems to be the date col with the most data and fewest NAs.
+
+wh_visitors_by_end_date
+
 ```
 
 Top 5 Dates: 
@@ -134,17 +118,20 @@ Top 5 Dates:
 4. 07-04-2023: Independence Day event at the White House hosted by President Biden and First Lady Jill Biden (recurring date with a big total of visitors)
 5. 12-13-2022: President Biden signs the Respect for Marriage Act, legalizing gay marriage
 
+Another important date: July 2, the day cocaine was found in the White House.
+
 This is actually pretty interesting! It's somewhat surprising that the top date doesn't solely have to do with the United States itself, but I remember driving through Capitol Hill several times that week and seeing the huge impact (both good and bad) that Modi's visit had on the city. The majority of these highest visited dates correlate with important international visits, United States-specific holidays, and the passage of significant things into law.
 
 We think it may actually be more interesting to look at data where groups were less than 100 because those may be attributed to big events or holidays, which we could have guessed. What are the most popular dates and months for regular folks?
 
 ```{r}
-clean_wh_visitor_data |>
+wh_visitor_data |>
   group_by(appt_end_date) |> 
   filter(total_people <100) |>
   summarize(count=n()) |>
   arrange(desc(count))
 ```
+
 Top 5 Dates: 
 
 1. 12-23-2022: President Biden passes a successful bipartisan funding bill
@@ -155,37 +142,300 @@ Top 5 Dates:
 
 This is so interesting because, aside from 12/23, none of the dates repeat in the data without big organized groups. This shows that big organized groups frequently visit on holidays and days with big international repercussions, while more national-focused events and big decisions are primarily attended by individuals or folks in smaller groups.
 
-```
+Note from Taylor - Can we look at the data for 3/18/23 to see who visited? Maybe it had something to do with St. Patrick's Day? Biden is Irish Catholic. Not sure if people actually do anything for that though.
+
 2.  Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
 
+ANSWER:It does not correlate with approval rating. We are basically done with this question but I still need to write up a little answer describing the data.
+
 ```{r}
+### Note - asked ChatGPT how to make the month column have labels and gave it my mutate code creating a new col with lubridate
+#reading in approval ratings data from gallup
+approval_ratings <- read_csv("data/biden_approval_gallup.csv", col_names = FALSE)
+
+colnames(approval_ratings) <- c("poll_date", "rep_approval_pct", "ind_approval_pct", "dem_approval_pct")
+  
+approval_ratings <- approval_ratings |>
+  separate(poll_date, into = c("year", "month", sep = "-")) |>
+  select(year, month, rep_approval_pct, ind_approval_pct, dem_approval_pct)
+
+approval_ratings <- approval_ratings |>
+  mutate(date = paste(year, month, sep = " "))
+
+#making a df with top months for visitors
+wh_visitor_by_month <- wh_visitors_by_end_date |> 
+ mutate(date_time = ymd_hms(appt_end_date),
+  month = month.abb[month(appt_end_date)])
+
+wh_visitor_by_month <- wh_visitor_by_month |>
+  group_by(month) |>
+  summarise(total_visits = sum(total_visits))
+
+#last one not really helpful bc didn't sort by year. Now doing the same with year and month
+wh_visitors_month_year <- wh_visitors_by_end_date |> 
+ mutate(date_time = ymd_hms(appt_end_date),
+  month = month.abb[month(appt_end_date)],
+  year = year(date_time))
+
+top_months_by_year <- wh_visitors_month_year |>
+  group_by(year, month) |>
+   summarise(total_visits = sum(total_visits))
 
 ```
+
+```{r}
+#not sure if that was useful. I think I need to join these dataframes. Asked chatgpt for help with this because I needed to join on the date column and didn't have one with year and month in it for top_months_by_year. Asked it: I want to create a date column that looks like this: 2022 Jan, 2022 Feb, 2022 March. Currently I have a year column that looks like this: 2022, 2022, 2022, and a month column that looks like this: Jan, Feb, March. How can I create this new column using r and the tidyverse?
+
+top_months_by_year <- top_months_by_year |>
+    mutate(date = as.Date(paste(year, month, "01"), format = "%Y %b %d"))
+
+approval_ratings <- approval_ratings |>
+  mutate(date = as.Date(paste(year, month, "01"), format = "%Y %b %d"))
+
+visits_by_month_ratings <- top_months_by_year |> 
+  left_join(approval_ratings, by = "date") |>
+  rename(year = year.x, month = month.x) |>
+  select(-year.y, -month.y) |>
+  na.omit(visits_by_month_ratings)
+```
+
+
+```{r}
+#note - chatgpt wrote this code for me, I wanted to put these on the same graph but couldn't figure out the scale part
+library(ggplot2)
+ggplot(visits_by_month_ratings, aes(x = date)) +
+  # Bar chart for total_visits
+  geom_bar(aes(y = total_visits), stat = "identity", fill = "darkgray") +
+  # Line graphs for approval_ratings
+  geom_line(aes(y = dem_approval_pct * max(total_visits) / max(dem_approval_pct)), color = "blue") +
+  geom_line(aes(y = ind_approval_pct * max(total_visits) / max(dem_approval_pct)), color = "darkgreen") +
+  geom_line(aes(y = rep_approval_pct * max(total_visits) / max(dem_approval_pct)), color = "red") +
+  # Y-axis scale for total_visits
+  scale_y_continuous(name = "Total Visits", breaks = seq(0, 70000, by = 10000)) +
+  # Secondary Y-axis scale for approval_rating
+  scale_y_continuous(
+    name = "Total Visits",
+    sec.axis = sec_axis(~ . * max(visits_by_month_ratings$dem_approval_pct) / max(visits_by_month_ratings$total_visits), name = "Dem Approval Rating")
+  ) +
+  theme_gray()
+
+#note - not sure if this is actually a valuable graph. Should we just throw out 2021 data because it's so sparse compared to 2022/23? Does this highlight fluctuations in visits or just a lack of data for earlier months? Also it wouldn't graph Dec 2022 which was the second highest month because of NA values in the approval ratings. @DEREK is there a way around this?
+```
+Derek's feedback:
+Doesn't seem like there's any correlation there, but if you wanted to find out you could calculate a correlation coefficient or do a t-test (https://thescoop.org/data_journalism_book/basicstats.html)
+
+Ok - let's calculate the correlation coefficient to see if these are related. I think we should just look at data from 2022 and 2023 because the 2021 data is not very robust.
+
+```{r}
+#let's take out 2021 data
+month_ratings_post_covid <- visits_by_month_ratings |> filter (date > "2021-12-31")
+
+#now let's run the correlation test
+month_ratings_post_covid |>
+  select(-year, -month, -date) |>
+  correlate()
+```
+
+Yup, looks like there is not really a significant relationship between visits to the White House and Biden's approval ratings for any party. 
 
 3.  West Wing Tours are selective, how many are being taken?
 
+WHERE WE ARE AT RIGHT NOW:
+Shaun are you working on this one? There’s nothing in the group notebook for this but we do have the analysis done looking at the data for the cocaine day. Might be good to look at the # of ppl who did west wing tours that day specifically and the mean / median # of ppl who visit for west wing tours normally.
+
 ```{r}
 
 ```
+
+Let's look at the day cocaine was found in the White House.
+
+```{r}
+# July 2 calculation
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-02")) |> 
+  group_by(appt_end_date) |> 
+  summarize(sum= sum(total_people)) 
+# so 1994 people visited the white house on that date. let's check what the average amount of people on monday is.
+wh_visitor_data |> 
+  mutate(day_of_week = wday(appt_end_date)) |> 
+  filter(day_of_week == 1) |> 
+  group_by(appt_end_date) |> 
+  summarize(total_people = sum(total_people)) |> 
+  filter(!is.na(total_people)) |> 
+  summary(round(total_people))
+
+wh_visitors_per_day <- wh_visitor_data |> 
+  mutate(date = date(appt_end_date)) |> 
+  group_by(date) |> 
+  summarize(total_people = sum(total_people)) |> 
+  filter(!is.na(total_people)) 
+
+#answer - 33,801 is the average number of visitors via the mean but that's thrown off by a couple days with an insanely high number of visitors. the median is more reasonable, 139.
+
+# funny. let's make a scatterplot with a line of best fit to see what the distribution is. perhaps the number of visitors has increased as time as went on?
+# without the function (thanks bard) ggplot was displaying like 2e19 which if i really think hard i can decipher but i am lazy so i made it display in a reasonable format
+format_numbers <- function(x) format(x, big.mark = ",", trim = 0)
+
+scatter_visitors_day <- 
+  ggplot(data=wh_visitors_per_day) +
+  geom_point(aes(x=date, y=total_people))
+
+scatter_visitors_day <- scatter_visitors_day + scale_y_continuous(labels = format_numbers)
+
+# It looks like the answer is not really. The days with tens of thousands of people seem to be big outliers, something is screwy with the white house's data
+wh_visitors_per_day |> 
+  arrange(desc(total_people))
+# on 12/01/2022, for example, several groups of 5,619 people allegedly toured the white house to visit kevin ballen. i looked him up and it looks like he's a really annoying (at least from his looks) literally-just-graduated Harvard alum who completed a bachelor's. 
+# edit: the more i read about him the more i am convinced he is an annoying person. from a crimson puff piece:
+# Kevin Ballen didn’t plan on taking two gap years. But he did intend to live a life less constrained by society’s expectations. [...] But a single moment made him rethink his altruistic efforts. It happened outside a local supermarket at a fundraiser for a day care that served homeless children. At the last minute, student leaders were unable to attend and Ballen was put in charge. “It was a realization of agency and what was possible for a young person like me,” he said. “I was able to lead a team, to make tangible change, to use my creativity.” 
+# sounds like someone owed this kid's parent a favor. cHrist. 
+# edit #2: it gets worse the more i look. this kid's thesis topic - i shit you not - that got featured on the harvard tiktok was literally "young people don't love taxes as much as he does." 
+
+# i decided to take a look at what the actual hell is happening on one of the days with a gigantic number of people. first, Dec. 1 2022. Macron visited the White House on that day.
+wh_visitor_data |> 
+     filter(str_detect(appt_end_date, "2022-12-01")) |> 
+     select(total_people, namelast, namefirst, visitee_namelast, visitee_namefirst) |> 
+     arrange(desc(total_people))
+
+# What's really strange is that 5619 people are visiting Ballen over and over. And they're not vising Joe Biden. I think he's either running a covert drug operation, an illicit prostitution ring (maybe Pizzagate wasn't that far off after all??), or this is a weird data keeping error. Let's see if it continues with the other days.
+
+wh_visitor_data |> 
+     filter(str_detect(appt_end_date, "2022-09-13")) |> 
+     select(total_people, namelast, namefirst, visitee_namelast, visitee_namefirst) |> 
+     arrange(desc(total_people))
+
+# So on this day, which is the day with the second most people visiting the white house, we see the weird repetition of the number of people visiting again, 4478 this time visiting Biden. Let's look at July 4, 2022. A large amount of people would make sense on that day.
+
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# So this time the magic number is 1182. They're all (allegedly) visiting Bonnie Casillas, the associate director for White House operations. Let's see if there are any rows with a reasonable amount of people visiting.
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  filter(total_people != 1182) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# Uhh. Now we have 788 people visiting Biden over and over again. Also strange. Let's see what happens when we filter out both 1182 and 788 
+
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+    filter(total_people != 1182 & total_people != 788) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# Now 752 is the number du jour. Jesus christ.
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  filter(total_people != 1182 & total_people != 788 & total_people !=752) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+# This is really weird. 
+wh_visitor_data |> 
+  filter(str_detect(appt_end_date, "2023-07-04")) |> 
+  unique(total_people) |> 
+  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
+  arrange(desc(total_people))
+
+wh_repeats <- table(wh_visitor_data$total_people)
+wh_repeats <- as.data.frame(wh_repeats)
+
+wh_repeats %>%
+  ggplot(aes(x = Freq)) +
+  geom_histogram(breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000)) 
+
+
+# So we know that usually, 
+```
+
+
 
 4.  Who has sponsored the most White House visitors?
+Here are the top 10 most popular people to visit in the White House:
+
+Visitors Office - 462398	- I think this is actually meant to be Office Visitors. More on this later.
+Joe	Biden	77197	- Not shocking.
+Ed	Teleky	17354	- Air Force Chief Master Sgt. Edward Teleky, Air Force Band's drum major - why is he getting so many visits?
+Gionelly	Mills	12383		- Staff Assistant for the White House Visitors Office
+Lydia	Hecmanczuk	6956	- IT Specialist at Executive Office of the President
+Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President
+Dan	Via	5841		
+Kevin	Ballen	4903		
+Peyton	Schwartz	4533		
+Kamala	Harris	4319 - Vice President
+
+WHERE WE ARE AT: 
+Mostly done with this. We should do some digging into the top ppl though. I can tackle this one - need to fix Kamala Harris with case_when
+
+This won't load properly because we have to upload the file and I missed a potus column when I was cleaning, but after office visitors, it's Biden, then Ed Teleky (17k visitors) and then Gionelly Mills (almost 13k visits).
 
 ```{r}
-
+wh_visitor_data |> 
+  group_by(visitee_namefirst_clean, visitee_namelast_clean) |>
+  summarise(visits = n()) |>
+  arrange(desc(visits))
 ```
+Let's clean our data a little bit better. 
+
+```{r}
+#used chatgpt to do this it took forever. It kept giving me code to change the last name from potus to Biden but tolower(visitee_namelast_clean) %in% c("potus") ~ "Joe" would not work. I asked it: can you help me write a case when for the following conditions: if visitee_namelast_clean == Potus or potus or POTUS,  change visitee_namelast_clean to Biden and visitee_namefirst_clean to Joe. 
+
+#It gave me the following code but with tolower(visitee_namelast_clean) %in% c("potus") ~ "Joe" - i finally figured out it was because I had already changed the visitee_namelast_clean column in the code above so it wouldn't recognize "potus" in the visitee_namelast_clean col to change the first name to Joe. 
+
+wh_visitor_data <- wh_visitor_data |>
+  mutate(
+    visitee_namelast_clean = case_when(
+      tolower(visitee_namelast_clean) %in% c("potus") ~ "Biden",
+      tolower(visitee_namelast_clean) %in% c("vpotus") ~ "Harris",
+      tolower(visitee_namelast_clean) %in% c("flotus") ~ "Biden",
+      TRUE ~ visitee_namelast_clean
+    ),
+    visitee_namefirst_clean = case_when(
+      tolower(visitee_namelast) %in% c("potus") ~ "Joe",
+      tolower(visitee_namelast) %in% c("vpotus") ~ "Kamala",
+      tolower(visitee_namelast) %in% c("flotus") ~ "Jill",
+      TRUE ~ visitee_namefirst_clean
+    )
+  )
+```
+
+
+```{r}
+#now let's run that data again
+wh_visitor_data |> 
+  group_by(visitee_namefirst_clean, visitee_namelast_clean) |>
+  summarise(visits = n()) |>
+  arrange(desc(visits))
+```
+
 
 5.  What percent of visitors have just been labeled "office visitors"?
 
-```{r}
+WHERE WE ARE AT:
+Done. Not that interesting but we need to do a little write up for it maybe we can make it sound more interesting highlight how this label is fucking up the data
 
+```{r}
+wh_visitor_data %>%
+  filter(str_detect(visitee_namelast, regex("office", ignore_case = TRUE))) |> 
+  filter(str_detect(visitee_namefirst, regex("visitors", ignore_case = TRUE))) |> 
+  summarize(count = n())  
+# result - 462349 entries with just that office visitors bs
+  
+462349/847371
 ```
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
 
+WHERE WE ARE AT: 
+Derek had some feedback about looking into more AI ppl / foreign ambassadors. Shaun I think you were working on this? We should tag team this probably - you want to take AI folks and someone else can look into foreign ambassadors or something?
+
 Let's see if we can find whether OpenAI lobbyists visited the president. According to Politico, there are the handful of lobbyists the company has:- Tony Samp- Chan ParkThe Politico story says that those two only started as OpenAI lobbyists in October so that doesn't help us.Let's try looking for the CEO, Samuel H Altman.
 
 ```{r}
-clean_wh_visitor_data |> 
+wh_visitor_data |> 
   filter(
     str_detect(namelast, regex("altman", ignore_case = TRUE))
     &
@@ -193,4 +443,4 @@ clean_wh_visitor_data |>
          )
 ```
 
-That shows us Samuel Altman.Makes sense.But what escapes me is that there is a Samuel N Altman and a Samuel H Altman.Theoretically, these should be two different people but when I search "samuel n altman -openai" with google, I get an Ancestry.com record for someone who was counted in the 1940 census, Samuel Altman the shift leader at Wallgreens, Samuel Altman the landscaper, Samuel Altman the president of a bio-nutrition labratory and Samuel Altman the lawyer in Georgia.None of those seem likely to visit the White House so it might just be a typographical error.Anyhow, assuming all of them are Samuel Altman, CEO of OpenAI:
+That shows us Samuel Altman. Makes sense. But what escapes me is that there is a Samuel N Altman and a Samuel H Altman. Theoretically, these should be two different people but when I search "samuel n altman -openai" with google, I get an Ancestry.com record for someone who was counted in the 1940 census, Samuel Altman the shift leader at Wallgreens, Samuel Altman the landscaper, Samuel Altman the president of a bio-nutrition labratory and Samuel Altman the lawyer in Georgia. None of those seem likely to visit the White House so it might just be a typographical error. So I'm going to assume they're all good ol' Open AI Sam.
