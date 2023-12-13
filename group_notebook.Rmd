@@ -11,6 +11,8 @@ output: html_notebook
 
 Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW1s5KP2PIQM/edit?usp=sharing 
 
+Load Libraries
+
 ```{r}
 library(tidyverse)
 library(corrr)
@@ -23,13 +25,18 @@ options(scipen=999)
 
 ```
 
+Let's clean the date columns now.
 ```{r}
 ###asked chatgpt how to turn a character column into a date time column, gave it some examples from our code and int told me to do this:
 wh_visitor_data <- read_csv("data/cleaned_OPENREFINE.csv") |> 
   clean_names()
 wh_visitor_data <- wh_visitor_data |> 
   mutate(appt_end_date = mdy_hm(appt_end_date))
-  
+
+#We need to take the time out of appt end date since some say 11:59 and some say 23:59.
+wh_visitor_data <- wh_visitor_data |>
+  mutate(appt_end_date = as.Date(appt_end_date))
+
 ```
 
 Let's take a quick look at the data now that we've changed these columns into dates.
@@ -38,14 +45,19 @@ Let's take a quick look at the data now that we've changed these columns into da
 glimpse(wh_visitor_data)
 ```
 
-Here are our new questions we'd like to answer: What are the most popular times / dates / months for White House visitors and how do they correlate with important political events? Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating) West Wing Tours are selective, how many are being taken? Who has sponsored the most White House visitors - e.g. who is getting the most visitors? What percent of visitors have just been labeled "office visitors"? If it's a significant percentage, that would seem to defeat the point of releasing these logs. Not much better than the Trump administration.
+Here are our new questions we'd like to answer: 
+  1. What are the most popular times / dates / months for White House visitors and how do they correlate with important political events? 
+  2. Has the amount of visitors fluctuated during Biden presidency (see if this correlates with rise in drop of approval rating)
+  3. West Wing Tours are selective, how many are being taken? How many were taken on July 2 when they found traces of cocaine?
+  4. Who has sponsored the most White House visitors - e.g. who is getting the most visitors? 
+  5. What percent of visitors have just been labeled "office visitors"? If it's a significant percentage, that would seem to defeat the point of releasing these logs. Not much better than the Trump administration.
+  6. How often are AI lobbyists and CEOs coming to visit during talks about regulating AI?
 
 Immediate limitations: 1. There are a lot of NAs in here where dates should go. I think the most reliable date is the appointment end date, which means the times are probably useless for us. 2. Dates and times aren't always written the same way. Is that going to cause us problems? We should probably check with Derek about that. 3. We wanted to look at how many folks are labeled office visitor - we're gonna have to find all instances of that, they're not marked the same. 4. We had a question about west wing visits. I don't see any identifying data here to show which ones are west wing visits, although there are a lot of confusing column names and abbreviations. 5. There are a ot of confusing column names and abbreviations - we will need to dig deeper into that to find out what we can actually look at here. 6. I still really want to know what types of people are visiting. Could we at least match congress people up using the propublica dataset and see how many folks are not house or senate members? We may be able to find a dataset of foreign powers we can match up as well.
 
-Let's see when the most popular day for visiting was. To do that, first we're going to create new columns with only the dates.
+Let's see when the most popular day for visiting was. First we need to figure out which date column to use.
 
 ```{r}
-####mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
 wh_visitor_data |>
   group_by(toa) |> 
@@ -67,6 +79,9 @@ wh_visitors_by_end_date <- wh_visitor_data |>
   arrange(desc(total_visits))
 
 ### this seems better
+
+wh_visitors_by_end_date
+
 ```
 
 
@@ -79,10 +94,20 @@ wh_visitor_data |> filter(if_any(-toa, is.na)) |>
 
 ```
 
+Now that we know what columns we need, let's finish cleaning our data.
+
+```{r}
+wh_visitor_data <- wh_visitor_data |>
+  select(-uin, -bdgnbr, -access_type, -appt_cancel_date, -last_updatedby, -post, -lastentrydate, -terminal_suffix, -caller_name_last, -caller_name_first, -caller_room, -column, -column2)
+```
+
 Question 1.  What are the most popular months and dates? What political events correlate with those?
 
 WHERE WE ARE AT RIGHT NOW: 
+Menna, can you run this code again and see if you get the same results? I realized our appt end date column had some things listed as 1/1/2021 11:59:00 and some as 23:59:00. I think we should get the same answers but want to make sure it's uniform. I wrote some code in the chunk below to clean that column so it's just date no time.
+
 Need to do some digging into the names that appear on these dates per Derek’s feedback. I think we should look at the dates when Menna filtered for groups smaller than 100. I think it would be worth looking at either the top 10 or looking at top dates filtering for groups smaller than 500 or something to se how it varies. We should def look at the data for the mysterious 3/18/23 date.
+
 
 ```{r}
 
@@ -107,11 +132,7 @@ wh_visitors_by_end_date <- wh_visitor_data |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
-#That looks better. Let's use appt end date because it seems to be the date col with the most data and fewest NAs. However, we need to take the time out since some say 11:59 and some say 23:59.
-
-wh_visitor_data <- wh_visitor_data |>
-  mutate(appt_end_date = )
-
+#That looks better. Let's use appt end date because it seems to be the date col with the most data and fewest NAs.
 ```
 
 Top 5 Dates: 
