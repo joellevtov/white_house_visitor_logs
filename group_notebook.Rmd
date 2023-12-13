@@ -13,11 +13,13 @@ Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW
 
 ```{r}
 library(tidyverse)
+library(corrr)
 library(tools)
 library(janitor)
 library(lubridate)
 library(ggplot2) #make sure you have ggplot 2 installed, not ggplot
 options(scipen=999)
+#install.packages("corrr")
 
 ```
 
@@ -71,9 +73,10 @@ wh_visitors_by_end_date <- wh_visitor_data |>
 ```{r}
 ###derek asked if the NA dates were specific to certain offices. how do we figure that out?
 
-wh_visitor_data |> filter(if_any(-toa_date, is.na)) |>
+wh_visitor_data |> filter(if_any(-toa, is.na)) |>
   group_by(meeting_loc) |>
   summarise(count = n())
+
 ```
 
 Question 1.  What are the most popular months and dates? What political events correlate with those?
@@ -86,7 +89,7 @@ Need to do some digging into the names that appear on these dates per Derek’s 
 ###mutate(toa_time = ymd_hms(toa) |> time()) we need to figure out how to separate out time from these two columns as well
 
 wh_visitor_data |>
-  group_by(toa_date) |> 
+  group_by(toa) |> 
   summarize(count=n()) |>
   arrange(desc(count))
   
@@ -104,9 +107,10 @@ wh_visitors_by_end_date <- wh_visitor_data |>
   summarize(total_visits = n()) |>
   arrange(desc(total_visits))
 
-#That looks better. Let's use appt end date because it seems to be the date col with the most data and fewest NAs.
+#That looks better. Let's use appt end date because it seems to be the date col with the most data and fewest NAs. However, we need to take the time out since some say 11:59 and some say 23:59.
 
-wh_visitors_by_end_date
+wh_visitor_data <- wh_visitor_data |>
+  mutate(appt_end_date = )
 
 ```
 
@@ -259,7 +263,7 @@ Shaun are you working on this one? There’s nothing in the group notebook for t
 
 ```
 
-Let's look at the day cocaine was found in the White House.
+Let's look at how many visitors came to the White House the day cocaine was found - July 2.
 
 ```{r}
 # July 2 calculation
