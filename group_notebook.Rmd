@@ -284,14 +284,18 @@ Shaun are you working on this one? There’s nothing in the group notebook for t
 
 ```
 
-Let's look at how many visitors came to the White House the day cocaine was found - July 2.
-
+On July 2, cocaine was found at the White House. 1994 people visited the White House that day, presumably most of them tourists. (Hard to imagine where all those people could have fit though.) Finding out whether this was an unusal amount of people proved to be quite a challenge thanks to what we realized was a strange quirk in the data. On some days, tens of thousands of visitors went to the White House, on others, only a few hundred. That led us to wonder if Biden had received more visitors as time has went on, so we made a scatterplot to see. The answer: No, not really. There did not seem to be any rhyme or reason to when more people came, in fact the days with thousands of people were rare. 
 ```{r}
 # July 2 calculation
 wh_visitor_data |> 
   filter(str_detect(appt_end_date, "2023-07-02")) |> 
   group_by(appt_end_date) |> 
   summarize(sum= sum(total_people)) 
+```
+
+
+```{r}
+
 # so 1994 people visited the white house on that date. let's check what the average amount of people on monday is.
 wh_visitor_data |> 
   mutate(day_of_week = wday(appt_end_date)) |> 
@@ -383,7 +387,6 @@ wh_repeats <- as.data.frame(wh_repeats)
 wh_repeats %>%
   ggplot(aes(x = Freq)) +
   geom_histogram(breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000)) 
-
 ```
 
 
@@ -482,7 +485,7 @@ wh_visitor_data |>
 5.  What percent of visitors have just been labeled "office visitors"?
 
 WHERE WE ARE AT:
-Done. Not that interesting but we need to do a little write up for it maybe we can make it sound more interesting highlight how this label is fucking up the data
+54% of rows 
 
 ```{r}
 wh_visitor_data %>%
