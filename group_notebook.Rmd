@@ -284,7 +284,10 @@ Shaun are you working on this one? There’s nothing in the group notebook for t
 
 ```
 
-On July 2, cocaine was found at the White House. 1994 people visited the White House that day, presumably most of them tourists. (Hard to imagine where all those people could have fit though.) Finding out whether this was an unusal amount of people proved to be quite a challenge thanks to what we realized was a strange quirk in the data. On some days, tens of thousands of visitors went to the White House, on others, only a few hundred. That led us to wonder if Biden had received more visitors as time has went on, so we made a scatterplot to see. The answer: No, not really. There did not seem to be any rhyme or reason to when more people came, in fact the days with thousands of people were rare. 
+On July 2, cocaine was found at the White House. 1994 people visited the White House that day, presumably most of them tourists. (Hard to imagine where all those people could have fit though.) Finding out whether this was an unusal amount of people proved to be quite a challenge thanks to what we realized was a strange quirk in the data. On some days, tens of thousands of visitors went to the White House, on others, only a few hundred. The mean number of visitors was 33,801 but that's thrown off by a couple days with an insanely high number of visitors. The median is a more reasonable, 139. 
+The mean being so different than the median led us to wonder if Biden had suddenly started received way more visitors as time has went on? We made a scatterplot to see, and our answer was: No, not really. There did not seem to be any rhyme or reason to when more people came, the days with thousands of people were pretty random. 
+So we dug into the dates with thousands of people allegedly visiting the White House some more. We identified something pretty strange: The people racking up thousands upon thousands of visits were not the president, were not the vice president, were not important people in the cabinet. It was a pretty random assortment of comparatively unimportant people got the same number of visitors over and over again. On 12/01/2022, the day French President Emmanuel Macron visited the White House, for example, several groups of 5,619 people allegedly toured the White House to visit Kevin Ballen, a literally-just-graduated Harvard alum who completed a bachelor's. Not Joe Biden. Similar trends could be observed with other days, with the same large number of people visiting seemingly unimportant people.
+
 ```{r}
 # July 2 calculation
 wh_visitor_data |> 
@@ -359,7 +362,7 @@ wh_visitor_data |>
   select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
   arrange(desc(total_people))
 
-# Uhh. Now we have 788 people visiting Biden over and over again. Also strange. Let's see what happens when we filter out both 1182 and 788 
+# Uhh. Now we have 788 people visiting Biden over and over again. Also strange. Let's see what happens when we filter out both 1182 and 788.
 
 wh_visitor_data |> 
   filter(str_detect(appt_end_date, "2023-07-04")) |> 
@@ -381,12 +384,22 @@ wh_visitor_data |>
   select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
   arrange(desc(total_people))
 
+# If this code doesn't work right run the table code first, then run it with the wh_repeats <- in front of it. That'll do the trick. This shows us how many repeats of certain numbers of visitors there are.
 wh_repeats <- table(wh_visitor_data$total_people)
 wh_repeats <- as.data.frame(wh_repeats)
 
 wh_repeats %>%
   ggplot(aes(x = Freq)) +
-  geom_histogram(breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000)) 
+  geom_histogram(bins=2000)
+
+# So the vast majority of repeated numbers are low. Let's take a closer look.
+
+wh_repeats |> 
+  ggplot(aes(x=Freq)) +
+  geom_histogram(bins=30) +
+  scale_x_continuous(limits = c(0, 2500))
+
+# So days with visitors roundabout 500 are the norm.
 ```
 
 
@@ -482,19 +495,21 @@ wh_visitor_data |>
 ```
 
 
-5.  What percent of visitors have just been labeled "office visitors"?
-
-WHERE WE ARE AT:
-54% of rows 
+5.  What percent of visitees have just been labeled "office visitors"?
+55%, roughly. That means in more than half of the visits to the White House recorded, we have no idea who the people visited. And that's only for the visits that _were_ recorded. There are all kinds of loopholes by which the White House does not have to report who's visited. But it's also possible that these 55% represent all those times, the times somebody visited and the White House doesn't want to say who. Either way, us not knowing who more than half of visitors visited is pretty sobering. 
 
 ```{r}
-wh_visitor_data %>%
+num_office_visitors <- wh_visitor_data %>%
   filter(str_detect(visitee_namelast, regex("office", ignore_case = TRUE))) |> 
   filter(str_detect(visitee_namefirst, regex("visitors", ignore_case = TRUE))) |> 
   summarize(count = n())  
+as.character(num_office_visitors)
 # result - 462349 entries with just that office visitors bs
-  
-462349/847371
+pct_office_visitors <- num_office_visitors/847371
+as.character(pct_office_visitors)
+percent_value <- paste0(floor(pct_office_visitors * 100), "%")
+percent_value
+# So roughly 55% of all visits logged went to "office visitors."
 ```
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
