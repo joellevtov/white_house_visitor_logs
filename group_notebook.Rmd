@@ -9,7 +9,7 @@ authors: Taylor, Menna, Shaun, Joel
 output: html_notebook
 ---
 
-Memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW1s5KP2PIQM/edit?usp=sharing 
+Midway data analysis memo link: https://docs.google.com/document/d/1j_19XNibAk0Modj5MFnaPfIz1M4JZ1dzW1s5KP2PIQM/edit?usp=sharing 
 
 Load Libraries
 
