@@ -361,133 +361,50 @@ ggplot(top_months_by_year, aes(x = date)) +
   theme_gray()
 ```
 
-3.  West Wing Tours are selective, how many are being taken?
+3.  How many West Wing tours were take the day cocaine was found in the White House? How does it compare to other days?
 
-WHERE WE ARE AT RIGHT NOW:
-Shaun are you working on this one? There’s nothing in the group notebook for this but we do have the analysis done looking at the data for the cocaine day. Might be good to look at the # of ppl who did west wing tours that day specifically and the mean / median # of ppl who visit for west wing tours normally.
+Cocaine was found in the West Wing where tours routinely went through. When evaluating the data, the first noticeable obstacle is certain labels being "WW" and others being "WEST WING." However, when looking at the capitalized WEST WING, all the accompanied caller_name_first entries say tour, which is not true for any other WW combination. When filtering for the date and WEST WING, I arrive at 1,215 people. 
 
 ```{r}
-
+wh_visitor_data %>%  
+  filter(str_detect(appt_end_date, "2023-07-02")) %>%  
+  filter(str_detect(meeting_room,"WEST WING")) %>% 
+  group_by(appt_end_date) %>%  
+  summarize(sum= sum(total_people))
 ```
 
 On July 2, cocaine was found at the White House. 1994 people visited the White House that day, presumably most of them tourists. (Hard to imagine where all those people could have fit though.) Finding out whether this was an unusal amount of people proved to be quite a challenge thanks to what we realized was a strange quirk in the data. On some days, tens of thousands of visitors went to the White House, on others, only a few hundred. The mean number of visitors was 33,801 but that's thrown off by a couple days with an insanely high number of visitors. The median is a more reasonable, 139. 
+
 The mean being so different than the median led us to wonder if Biden had suddenly started received way more visitors as time has went on? We made a scatterplot to see, and our answer was: No, not really. There did not seem to be any rhyme or reason to when more people came, the days with thousands of people were pretty random. 
 So we dug into the dates with thousands of people allegedly visiting the White House some more. We identified something pretty strange: The people racking up thousands upon thousands of visits were not the president, were not the vice president, were not important people in the cabinet. It was a pretty random assortment of comparatively unimportant people got the same number of visitors over and over again. On 12/01/2022, the day French President Emmanuel Macron visited the White House, for example, several groups of 5,619 people allegedly toured the White House to visit Kevin Ballen, a literally-just-graduated Harvard alum who completed a bachelor's. Not Joe Biden. Similar trends could be observed with other days, with the same large number of people visiting seemingly unimportant people.
 
-```{r}
-# July 2 calculation
-wh_visitor_data |> 
-  filter(str_detect(appt_end_date, "2023-07-02")) |> 
-  group_by(appt_end_date) |> 
-  summarize(sum= sum(total_people)) 
-```
-
 
 ```{r}
-
-# so 1994 people visited the white house on that date. let's check what the average amount of people on monday is.
+# so 1,215 people visited the white house on that date. let's check what the average amount of people on a monday is.
 wh_visitor_data |> 
   mutate(day_of_week = wday(appt_end_date)) |> 
   filter(day_of_week == 1) |> 
+  filter(str_detect(meeting_room,"WEST WING")) |>
   group_by(appt_end_date) |> 
   summarize(total_people = sum(total_people)) |> 
   filter(!is.na(total_people)) |> 
   summary(round(total_people))
 
+ # Median WW visitors on a given Monday: 1,193
+
 wh_visitors_per_day <- wh_visitor_data |> 
   mutate(date = date(appt_end_date)) |> 
-  group_by(date) |> 
+  filter(str_detect(meeting_room,"WEST WING")) |>
+  group_by(date) |>
   summarize(total_people = sum(total_people)) |> 
-  filter(!is.na(total_people)) 
+  filter(!is.na(total_people)) |>
+  summary(round(total_people))
 
-#answer - 33,801 is the average number of visitors via the mean but that's thrown off by a couple days with an insanely high number of visitors. the median is more reasonable, 139.
+# Median : 405.0  
+#Mean : 616.4
 
-# funny. let's make a scatterplot with a line of best fit to see what the distribution is. perhaps the number of visitors has increased as time as went on?
-# without the function (thanks bard) ggplot was displaying like 2e19 which if i really think hard i can decipher but i am lazy so i made it display in a reasonable format
-format_numbers <- function(x) format(x, big.mark = ",", trim = 0)
-
-scatter_visitors_day <- 
-  ggplot(data=wh_visitors_per_day) +
-  geom_point(aes(x=date, y=total_people))
-
-scatter_visitors_day <- scatter_visitors_day + scale_y_continuous(labels = format_numbers)
-
-# It looks like the answer is not really. The days with tens of thousands of people seem to be big outliers, something is screwy with the white house's data
-wh_visitors_per_day |> 
-  arrange(desc(total_people))
-# on 12/01/2022, for example, several groups of 5,619 people allegedly toured the white house to visit kevin ballen. i looked him up and it looks like he's a really annoying (at least from his looks) literally-just-graduated Harvard alum who completed a bachelor's. 
-# edit: the more i read about him the more i am convinced he is an annoying person. from a crimson puff piece:
-# Kevin Ballen didn’t plan on taking two gap years. But he did intend to live a life less constrained by society’s expectations. [...] But a single moment made him rethink his altruistic efforts. It happened outside a local supermarket at a fundraiser for a day care that served homeless children. At the last minute, student leaders were unable to attend and Ballen was put in charge. “It was a realization of agency and what was possible for a young person like me,” he said. “I was able to lead a team, to make tangible change, to use my creativity.” 
-# sounds like someone owed this kid's parent a favor. cHrist. 
-# edit #2: it gets worse the more i look. this kid's thesis topic - i shit you not - that got featured on the harvard tiktok was literally "young people don't love taxes as much as he does." 
-
-# i decided to take a look at what the actual hell is happening on one of the days with a gigantic number of people. first, Dec. 1 2022. Macron visited the White House on that day.
-wh_visitor_data |> 
-     filter(str_detect(appt_end_date, "2022-12-01")) |> 
-     select(total_people, namelast, namefirst, visitee_namelast, visitee_namefirst) |> 
-     arrange(desc(total_people))
-
-# What's really strange is that 5619 people are visiting Ballen over and over. And they're not vising Joe Biden. I think he's either running a covert drug operation, an illicit prostitution ring (maybe Pizzagate wasn't that far off after all??), or this is a weird data keeping error. Let's see if it continues with the other days.
-
-wh_visitor_data |> 
-     filter(str_detect(appt_end_date, "2022-09-13")) |> 
-     select(total_people, namelast, namefirst, visitee_namelast, visitee_namefirst) |> 
-     arrange(desc(total_people))
-
-# So on this day, which is the day with the second most people visiting the white house, we see the weird repetition of the number of people visiting again, 4478 this time visiting Biden. Let's look at July 4, 2022. A large amount of people would make sense on that day.
-
-wh_visitor_data |> 
-  filter(str_detect(appt_end_date, "2023-07-04")) |> 
-  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
-  arrange(desc(total_people))
-
-# So this time the magic number is 1182. They're all (allegedly) visiting Bonnie Casillas, the associate director for White House operations. Let's see if there are any rows with a reasonable amount of people visiting.
-wh_visitor_data |> 
-  filter(str_detect(appt_end_date, "2023-07-04")) |> 
-  filter(total_people != 1182) |> 
-  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
-  arrange(desc(total_people))
-
-# Uhh. Now we have 788 people visiting Biden over and over again. Also strange. Let's see what happens when we filter out both 1182 and 788.
-
-wh_visitor_data |> 
-  filter(str_detect(appt_end_date, "2023-07-04")) |> 
-    filter(total_people != 1182 & total_people != 788) |> 
-  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
-  arrange(desc(total_people))
-
-# Now 752 is the number du jour. Jesus christ.
-wh_visitor_data |> 
-  filter(str_detect(appt_end_date, "2023-07-04")) |> 
-  filter(total_people != 1182 & total_people != 788 & total_people !=752) |> 
-  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
-  arrange(desc(total_people))
-
-# This is really weird. 
-wh_visitor_data |> 
-  filter(str_detect(appt_end_date, "2023-07-04")) |> 
-  unique(total_people) |> 
-  select(namefirst, namelast,  visitee_namefirst, visitee_namelast, total_people) |> 
-  arrange(desc(total_people))
-
-# If this code doesn't work right run the table code first, then run it with the wh_repeats <- in front of it. That'll do the trick. This shows us how many repeats of certain numbers of visitors there are.
-wh_repeats <- table(wh_visitor_data$total_people)
-wh_repeats <- as.data.frame(wh_repeats)
-
-wh_repeats %>%
-  ggplot(aes(x = Freq)) +
-  geom_histogram(bins=2000)
-
-# So the vast majority of repeated numbers are low. Let's take a closer look.
-
-wh_repeats |> 
-  ggplot(aes(x=Freq)) +
-  geom_histogram(bins=30) +
-  scale_x_continuous(limits = c(0, 2500))
-
-# So days with visitors roundabout 500 are the norm.
+#So it looks like Mondays are particularly busy days for West Wing tours compared to other days, but there weren't a notably high number of visitors on the day they found cocaine in the White House.
 ```
-
 
 4.  Who has sponsored the most White House visitors?
 Here are the top 10 most popular people to visit in the White House:
@@ -600,9 +517,6 @@ percent_value
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
 
-WHERE WE ARE AT: 
-Derek had some feedback about looking into more AI ppl / foreign ambassadors. Shaun I think you were working on this? We should tag team this probably - you want to take AI folks and someone else can look into foreign ambassadors or something?
-
 Let's see if we can find whether OpenAI lobbyists visited the president. According to Politico, there are the handful of lobbyists the company has:- Tony Samp- Chan ParkThe Politico story says that those two only started as OpenAI lobbyists in October so that doesn't help us.Let's try looking for the CEO, Samuel H Altman.
 
 ```{r}
@@ -615,3 +529,275 @@ wh_visitor_data |>
 ```
 
 That shows us Samuel Altman. Makes sense. But what escapes me is that there is a Samuel N Altman and a Samuel H Altman. Theoretically, these should be two different people but when I search "samuel n altman -openai" with google, I get an Ancestry.com record for someone who was counted in the 1940 census, Samuel Altman the shift leader at Wallgreens, Samuel Altman the landscaper, Samuel Altman the president of a bio-nutrition labratory and Samuel Altman the lawyer in Georgia. None of those seem likely to visit the White House so it might just be a typographical error. So I'm going to assume they're all good ol' Open AI Sam.
+
+We will take this to look at specific lobbyists who are contracted by may have visited the White House. We did this by going through the lobbying disclosures from the US House of Representatives and cross-referencing names. We searched specifically for artificial intellignece lobbyists over the past three years. 
+
+
+First we will look at Julie Babayan who, according to her Linkedin, is the head of policy development at Adobe. 
+
+In July Babayan was at the White House on the 11th and 12th. The Biden-Harris administration announced a task force related to managing the risk and "harnessing the benefits" of AI nine days after these visits ended. While Adobe did not commit until September in the second round of commitments, that could be what this was used for. 
+
+She visited four times, all in 2023
+
+(https://www.whitehouse.gov/briefing-room/statements-releases/2023/09/12/fact-sheet-biden-harris-administration-secures-voluntary-commitments-from-eight-additional-artificial-intelligence-companies-to-manage-the-risks-posed-by-ai/) 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("Babayan", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^Julie", ignore_case=TRUE))
+         )
+```
+
+
+Next we will look at Keenan Austin Reed, the executive vice president of the Alpine Group, a lobbying organization contracted by Facebook. While he's not listed as Meta's lobbyist, he does work for Lyft and ArgoAI, who specializes in driving technology. We see three visits in 2022 and one visit in 2023. 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("austinreed", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^keenan", ignore_case=TRUE))
+  )
+```
+
+
+Next we will look at Apple, who has a team of lobbyists on their payroll. I checked each of the following lobbyists using OpenSecrets Lobbying Profile feature and found they all exclusively lobby for Apple. 
+
+There was no record of Jeff Dobrozsi visiting the White House.
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("dobrozsi", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^jeff", ignore_case=TRUE))
+  )
+
+```
+
+I found multiple Robert Harris' on here, however could not find a middle intial online or anyway to identify the Robert Harris from Apple to the average person who happened to be named Robert Harris. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("harris", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^robert", ignore_case=TRUE))
+  )
+```
+
+
+There are four visits with an April Jones, three with the middle initial of N however. All three of April N. Jones' visits came in 2023, with one being set up by Samuel Negatu on January 19, who is part of the office of US Trade Representatives. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("jones", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^april", ignore_case=TRUE))
+  )
+```
+
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("jones", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^april", ignore_case=TRUE))
+  )
+```
+
+The next lobbyist is Alexis Marks Mosher. While Alexis Marks Mosher found nothing, Alexis Marks, with the middle initial of S has made seven visits since Biden's innauguration, although two are in the same day. Once in 2021, three in 2022 and two in 2023. I found little evidence of a different Alexis Marks being relevant enough to had made so many visits. Among Marks visits was a meeting with Joe Biden. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("marks", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^alexis", ignore_case=TRUE))
+  )
+```
+
+There is no evidence of Conor McGrath entering the White House. 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("mcgrath", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^conor", ignore_case=TRUE))
+  )
+```
+
+A Walter Kuhn visited twice in 2022. However, he left Apple for a position with Shopify in January of that year, both of these visits occured after, leading me to believe this isn't the Apple lobbyist visitng. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("kuhn", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^walter", ignore_case=TRUE))
+  )
+```
+
+Timothy Powderly visited twice in 2021, once in 2022 and another time in 2023. 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("powderly", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^timothy", ignore_case=TRUE))
+  )
+```
+
+
+The next group we will be looking at are Stoney Burke and Ryan Dattlio, who work for Aquia Group LLC and are the lobbyists for Amazon Web Services. 
+
+There is no record of Burke or Dattlio. Neither of the Amazon Web Services lobbyists 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("burke", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^stoney", ignore_case=TRUE))
+  )
+```
+
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("Dattlio", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^Ryan", ignore_case=TRUE))
+  )
+```
+
+
+The next name is another Amazon name. Taunja Berquam, who works for Team Hallahan and on behalf of Amazon. 
+
+Berquam visited the White House one time in 2023. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("berquam", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^taunja", ignore_case=TRUE))
+  )
+```
+
+The next name will Anthony Bedell and Clarence Williams, who represents CrowdAI. Bedell visited one in 2023. 
+
+There is a Clarence D. Williams who visited twice, one of them being Williams III. Clarence D. Williams III is a retired partner of Shabazz Law Firm who had a 44 year law enforcement career. The lobbyist has the middle initial of L. Both have the middle intial of D, assuming they are the same person. Even if that is wrong, there is another lawyer in DC named Clarence Williams who advocates to congress. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("bedell", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^anthony", ignore_case=TRUE))
+  )
+```
+
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("williams", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^clarence", ignore_case=TRUE))
+  )
+```
+
+
+The next name is Robert Babcock, who is a representative of Google. There is no record of Robert Babcock visiting the White House. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("babcock", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^robert", ignore_case=TRUE))
+  )
+```
+
+A Cory Crowley visited once in 2022, can't find any evidence online verifying if this is the correct one. 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("crowley", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^cory", ignore_case=TRUE))
+  )
+```
+
+The next person I'm looking at is Howard Berman, who also works with Microsoft. There is no record of a Howard Berman visiting the White House. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("berman", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^howard", ignore_case=TRUE))
+  )
+```
+
+David Lugar, who works for 535 Group and represents Meta is the next name on this list. There is no record of him visiting the White House. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("lugar", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^david", ignore_case=TRUE))
+  )
+```
+
+The last two names we will be looking at are Chan Park, Steve Phillips and Tony Samp, who do work for OpenAI. 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("park", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^chan", ignore_case=TRUE))
+  )
+```
+
+This gave me a number of irrelevant results, I asked ChatGPT how to only get names that are "Chan" and "Park" excluding all other names. While five visits are listed for Chan Park, four occur on April 26, which coincides with the president of the Republic of Korea visiting the White House and there being a dinner. Among the topics discussed between the two leaders was cooperation on artificial intelligence initiatives. 
+
+Both of Park's visits were in 2023, the first was on April 17. 
+
+```{r}
+wh_visitor_data %>%
+  filter(
+    str_detect(namelast, regex("^PARK$", ignore_case = TRUE)) &
+    str_detect(namefirst, regex("^CHAN$", ignore_case = TRUE))
+  )
+```
+
+There are four visits from Steven Phillips' during the Biden presidency. However, according to Open Secrets, Steven Phillips of OpenAI has the middle intial R, which none of these have. Therefore we're not comfortable using them for data analysis. 
+
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("phillips", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^steve", ignore_case=TRUE))
+  )
+```
+
+
+There is no record of Tony Samp having visited the White House. 
+```{r}
+wh_visitor_data %>%  
+  filter(
+    str_detect(namelast, regex("samp", ignore_case = TRUE))
+    &
+    str_detect(namefirst, regex("^tony", ignore_case=TRUE))
+  )
+```
+
+In a Google Sheet I kept track of White House Visits as I went, along. Among Artifical Intelligence Lobbyists aligned with major companies, there has been a consistent growth in White House visits. This analysis measured three in 2021, seven in 2022 and 15 in 2023. 
+
+https://docs.google.com/spreadsheets/d/1_W5cYKT39epYpnrtlrbFVyvenZn335Umg3WhmThKwPE/edit?usp=sharing

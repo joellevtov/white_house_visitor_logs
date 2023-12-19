@@ -476,8 +476,6 @@ wh_visitor_data %>%
 
 6.  How often are specific people visiting? AI people? Things they want to regulate? Pick who we want to look at.
 
-
-
 ```{r}
 wh_visitor_data %>%  
   filter(
