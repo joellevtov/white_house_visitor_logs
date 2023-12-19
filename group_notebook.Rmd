@@ -208,7 +208,6 @@ top_months_by_year <- wh_visitors_month_year |>
 ```
 
 
-
 ```{r}
 #not sure if that was useful. I think I need to join these dataframes. Asked chatgpt for help with this because I needed to join on the date column and didn't have one with year and month in it for top_months_by_year. Asked it: I want to create a date column that looks like this: 2022 Jan, 2022 Feb, 2022 March. Currently I have a year column that looks like this: 2022, 2022, 2022, and a month column that looks like this: Jan, Feb, March. How can I create this new column using r and the tidyverse?
 
@@ -420,12 +419,12 @@ Amanda	Trocola	6356 - Deputy Social Secretary to the Vice President - would be i
 Dan	Via	5841 - Not sure if I found the right person but I think he's Deputy Director, Ceremonies and Protocol for the Air Force - also seems kind of weird but maybe handling events? Worth looking into further. Looks like he's getting a lot of visits from a violinist for the marines, another music person in the marines band and the CEO of a screen printing company in the area. Doesn't seem super interesting.
 
 Kevin	Ballen	4903 - Advisor to Director of National Economic Council, previously Staff Assistant for Operations
-Could be worth looking into
+Could be worth looking into. His top visitor only came 4 times - I think we'd need to know more about his role to know why many people are coming to visit him a few times.
 
-Peyton	Schwartz 4533 - Special Assistant to the Social Secretary & Deputy Director of Arrangements
-Could be worth looking into
+Peyton Schwartz 4533 - Special Assistant to the Social Secretary & Deputy Director of Arrangements
+Could be worth looking into - looks like she's also getting lots of people visiting a few times. Same feedback as for Ballen.
 
-Kamala	Harris	4319 - Vice President
+Kamala Harris	4319 - Vice President
 Really surprised she gets so few visits?
 
 
@@ -467,6 +466,8 @@ wh_visitor_data |>
   summarise(visits = n()) |>
   arrange(desc(visits))
 ```
+
+
 ```{r}
 wh_visitor_data |> 
  filter(visitee_namelast_clean == "Mills" & visitee_namefirst_clean == "Gionelly") |>
@@ -491,6 +492,20 @@ wh_visitor_data |>
   group_by(namelast, namefirst, namemid) |>
   summarise(total_visits = n()) |>
   arrange(desc(total_visits))
+
+wh_visitor_data |> 
+ filter(visitee_namelast_clean == "Ballen" & visitee_namefirst_clean == "Kevin") |>
+  group_by(namelast, namefirst, namemid) |>
+  summarise(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+wh_visitor_data |> 
+ filter(visitee_namelast_clean == "Schwartz" & visitee_namefirst_clean == "Peyton") |>
+  group_by(namelast, namefirst, namemid) |>
+  summarise(total_visits = n()) |>
+  arrange(desc(total_visits))
+
+
 
 ```
 
